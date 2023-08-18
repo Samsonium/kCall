@@ -1,0 +1,10 @@
+/*
+
+# Dirs
+!/front
+!/back
+
+# Files
+!/.gitignore
+!/package.json
+!/yarn.lock
