@@ -1,8 +1,8 @@
 /*
 
 # Dirs
-!/public
 !/src
+!/test
 
 # Files
 !/.gitignore
