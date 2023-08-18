@@ -1,11 +1,21 @@
 import KCallServer from './server';
 import KCallSocket from './socket';
 
+let kserv: KCallServer;
+let ksock: KCallSocket;
+
 function main() {
-    const kserv = new KCallServer();
-    const ksock = new KCallSocket(kserv.server);
+    kserv = new KCallServer();
+    ksock = new KCallSocket(kserv.server);
 
     ksock.setup();
     kserv.server.listen(7000);
 }
-main();
+
+try {
+    main();
+} catch (e) {
+    console.log(`[SERVER]: RUNTIME ERROR (${e.message})`);
+    ksock?.io?.close?.();
+    kserv?.server?.close?.();
+}

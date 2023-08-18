@@ -15,4 +15,10 @@ export default interface SocketInMethods extends SocketEventsMap {
      * Leave room
      */
     leaveRoom: () => void;
+
+    /**
+     * Send message to room chat
+     * @param message
+     */
+    sendMessage: (message: string) => void;
 }
