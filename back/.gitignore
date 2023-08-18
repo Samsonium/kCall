@@ -1,8 +1,10 @@
 /*
 
 # Dirs
+!/public
 !/src
 
 # Files
 !/.gitignore
 !/package.json
+!/tsconfig.json
