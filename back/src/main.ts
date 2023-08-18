@@ -8,3 +8,4 @@ function main() {
     ksock.setup();
     kserv.server.listen(7000);
 }
+main();
