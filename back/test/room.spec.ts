@@ -26,7 +26,7 @@ describe('Room join and leave', () => {
         expect(socket).toBeInstanceOf(Socket);
     })
     it('Join room', () => new Promise<void>(done => {
-        socket.on('joinAccepted', (args) => {
+        socket.on('joinAccepted', () => {
             expect(true).toBe(true);
             done();
         });

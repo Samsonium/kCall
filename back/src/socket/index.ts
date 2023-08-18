@@ -1,7 +1,7 @@
 import SocketOutMethods from './SocketOutMethods';
 import SocketInMethods from './SocketInMethods';
 import SocketData from './SocketData';
-import {Server as SocketIOServer, Socket, ServerOptions} from 'socket.io';
+import {Server as SocketIOServer, ServerOptions} from 'socket.io';
 import {Server} from 'http';
 
 /**
