@@ -1,0 +1,8 @@
+{
+  "name": "kcall",
+  "private": true,
+  "workspaces": [
+    "./front",
+    "./back"
+  ]
+}
