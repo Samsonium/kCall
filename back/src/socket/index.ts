@@ -8,18 +8,32 @@ import {Server} from 'http';
  * Socket server implementation for kCall backend service
  */
 export default class KCallSocket {
-    private readonly io: SocketIOServer<SocketInMethods, SocketOutMethods, {}, SocketData>;
+    private readonly _io: SocketIOServer<SocketInMethods, SocketOutMethods, {}, SocketData>;
+    public get io() { return this._io }
 
     constructor(server: Server, options?: Partial<ServerOptions>) {
-        this.io = new SocketIOServer(server, {
+        this._io = new SocketIOServer(server, {
             allowEIO3: true,
             ...(options ?? {})
         });
     }
 
     public setup(): void {
-        this.io.on('connection', (socket) => {
-            // TODO: Socket events
+        this._io.on('connection', (socket) => {
+            console.log(`[${socket.id}]: CONNECTED`)
+
+            socket.on('joinRoom', (roomID, userID) => {
+                console.log(`[${socket.id}][${userID}]: JOINS ROOM ${roomID}`);
+                socket.join(roomID);
+                socket.to(roomID).emit('userJoined', userID);
+                socket.emit('joinAccepted', []);
+
+                // TODO
+
+                socket.on('disconnect', () => {
+                    console.log(`[${socket.id}][${userID}]: DISCONNECTED`)
+                });
+            });
         });
     }
 }
