@@ -3,27 +3,38 @@
     import {onMount} from 'svelte';
     import {slide} from 'svelte/transition';
     import {io, Socket} from 'socket.io-client';
+    import {type MediaConnection, Peer} from 'peerjs';
     import type SocketOutMethods from '../utils/SocketOutMethods';
     import type SocketInMethods from '../utils/SocketInMethods';
 
+    let peer: Peer;
     let socket: Socket<SocketOutMethods, SocketInMethods>;
     let myVideo: HTMLVideoElement;
+    let videoGrid: HTMLDivElement;
 
     onMount(() => {
-        socket = io(`ws://${location.hostname}:7000`, {
-            path: '/socket'
+        peer = new Peer({
+            host: 'localhost',
+            path: '/peer',
+            port: 7000
         });
-        socket.on('connect', () => {
-            socket.on('joinAccepted', (chatHistory) => {
-                $roomInfo.connected = true;
-                $roomInfo.chat = chatHistory;
-                console.log(chatHistory);
 
-                socket.on('newMessage', (userID, message) => {
-                    $roomInfo.chat = [...$roomInfo.chat, {
-                        name: userID,
-                        message
-                    }]
+        peer.on('open', id => {
+            socket = io(`ws://${location.hostname}:7000`, {
+                path: '/socket'
+            });
+            socket.on('connect', () => {
+                socket.on('joinAccepted', (chatHistory) => {
+                    $roomInfo.connected = true;
+                    $roomInfo.chat = chatHistory;
+                    console.log(chatHistory);
+
+                    socket.on('newMessage', (userID, message) => {
+                        $roomInfo.chat = [...$roomInfo.chat, {
+                            name: userID,
+                            message
+                        }]
+                    });
                 });
 
                 navigator.mediaDevices.getUserMedia({
@@ -34,15 +45,31 @@
                     myVideo.muted = true;
                     myVideo.addEventListener('loadedmetadata', () => {
                         myVideo.play();
-                    })
+                    });
+
+                    // Setup peer call event
+                    peer.on('call', (call: MediaConnection) => {
+                        call.answer(myStream);
+                        const video = document.createElement('video');
+                        call.on('stream', (otherStream: MediaStream) => {
+                            addVideoStream(video, otherStream);
+                        });
+                        call.on('close', () => {
+                            video.remove();
+                        });
+                    });
+
+                    socket.on('userJoined', (userID) => handleUserConnection(userID, myStream));
+                    socket.on('userLeaved', (userID) => handleUserLeave(userID));
+
+                    socket.emit('joinRoom', $roomInfo.id, id);
                 });
             });
-            socket.emit('joinRoom', $roomInfo.id, $roomInfo.user);
-        });
-        socket.on('connect_error', (err) => {
-            console.log('Cannot connect:', err);
-            alert('Ошибка подключения!');
-            socket.close();
+            socket.on('connect_error', (err) => {
+                console.log('Cannot connect:', err);
+                alert('Ошибка подключения!');
+                socket.close();
+            });
         });
     });
 
@@ -54,10 +81,50 @@
     let message = ''
 
     /**
+     * Adds new media stream
+     * @param container
+     * @param stream
+     */
+    function addVideoStream(container: HTMLVideoElement, stream: MediaStream) {
+        container.srcObject = stream;
+        container.addEventListener('loadedmetadata', () => container.play());
+        videoGrid.append(container);
+    }
+
+    /**
+     * New user in room event handler
+     * @param userID
+     * @param stream
+     */
+    function handleUserConnection(userID: string, stream: MediaStream) {
+        const call = peer.call(userID, stream);
+        const video = document.createElement('video');
+        video.id = userID;
+        call.on('stream', (userStream: MediaStream) => {
+            addVideoStream(video, userStream);
+            $roomInfo.members[userID] = call;
+        });
+        call.on('close', () => {
+            video.remove();
+            delete $roomInfo.members[userID];
+            $roomInfo.members = $roomInfo.members;
+        });
+    }
+
+    /**
+     * User leave event handler
+     */
+    function handleUserLeave(userID: string) {
+        delete $roomInfo.members[userID];
+        $roomInfo.members = $roomInfo.members;
+    }
+
+    /**
      * Leave the room
      */
     function leaveRoom() {
         $roomInfo = null;
+        location.search = '';
     }
 
     /**
@@ -71,24 +138,11 @@
 
 <div class="room">
     <div class="header">
-        <h3>kCall &horbar; {$roomInfo.id}</h3>
+        <h3>KAMAZ Call &horbar; {$roomInfo.id}</h3>
         <button class="exit" on:click={leaveRoom}>Отключиться</button>
     </div>
     <div class="video-box">
-        <div class="videos">
-            <video></video>
-            <video></video>
-            <video></video>
-            <video></video>
-            <video></video>
-            <video></video>
-            <video></video>
-            <video></video>
-            <video></video>
-            <video></video>
-            <video></video>
-            <video></video>
-        </div>
+        <div class="videos" bind:this={videoGrid}></div>
         <div class="self-video">
             <video bind:this={myVideo}></video>
         </div>
@@ -170,18 +224,17 @@
           width: 100%;
           height: 100%;
           padding: 32px;
-          display: flex;
-          flex-flow: row wrap;
-          align-items: center;
-          justify-content: center;
-          align-content: center;
+          display: grid;
+          grid-template-columns: auto;
+          grid-template-rows: auto;
 
-          video {
-            width: 30%;
+          :global(video) {
+            flex: 1;
             aspect-ratio: 16 / 9;
             background: #21272d;
             margin: 8px;
             border-radius: 16px;
+            object-fit: cover;
           }
         }
 
