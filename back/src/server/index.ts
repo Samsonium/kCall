@@ -13,5 +13,6 @@ export default class KCallServer {
         const app = express();
         this._server = new Server(app);
         app.use('/peer', ExpressPeerServer(this._server));
+        app.use(express.static('public'));
     }
 }
