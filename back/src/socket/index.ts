@@ -29,10 +29,10 @@ export default class KCallSocket {
         this._io.on('connection', (socket) => {
             Logger.instance.info(`[${socket.id}]: CONNECTED`)
 
-            socket.on('joinRoom', (roomID, userID) => {
-                Logger.instance.info(`[${socket.id}][${userID}]: JOINS ROOM ${roomID}`);
+            socket.on('joinRoom', (roomID, userID, displayName: string) => {
+                Logger.instance.info(`[${socket.id}][${userID}]: JOINS ROOM ${roomID} with name ${displayName}`);
                 socket.join(roomID);
-                socket.to(roomID).emit('userJoined', userID);
+                socket.to(roomID).emit('userJoined', userID, displayName);
 
                 // Check room in chats map
                 if (!this.chats.has(roomID))
@@ -42,9 +42,9 @@ export default class KCallSocket {
                 // Send message
                 socket.on('sendMessage', (message) => {
                     Logger.instance.info(`[${socket.id}][${userID}]: MESSAGE TO ROOM ${roomID} -> ${message}`)
-                    this.io.to(roomID).emit('newMessage', userID, message);
+                    this.io.to(roomID).emit('newMessage', displayName, message);
                     this.chats.get(roomID).push({
-                        name: userID,
+                        name: displayName,
                         message
                     });
                 });

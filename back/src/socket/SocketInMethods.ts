@@ -9,7 +9,7 @@ export default interface SocketInMethods extends SocketEventsMap {
      * @param roomID Room identifier
      * @param userID Peer user identifier
      */
-    joinRoom: (roomID: string, userID: string) => void;
+    joinRoom: (roomID: string, userID: string, displayName: string) => void;
 
     /**
      * Leave room
