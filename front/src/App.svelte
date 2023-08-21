@@ -6,12 +6,14 @@
 
   onMount(() => {
     const params = new URLSearchParams(location.search);
-
-    roomInfo.set({
-      connected: false,
-      id: params.get('room'),
-      user: params.get('user')
-    });
+    if (params.has('user') && params.has('room')) {
+      roomInfo.set({
+        connected: false,
+        id: params.get('room'),
+        user: params.get('user'),
+        members: {}
+      });
+    }
 
     console.log($roomInfo);
   });
