@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {roomInfo} from '../utils/store';
+    import {roomInfo, streamInfo} from '../utils/store';
     import {onMount} from 'svelte';
     import {slide} from 'svelte/transition';
     import {io, Socket} from 'socket.io-client';
@@ -16,7 +16,8 @@
         peer = new Peer({
             host: 'localhost',
             path: '/peer',
-            port: 7000
+            port: 7000,
+            secure: true
         });
 
         peer.on('open', id => {
@@ -25,7 +26,7 @@
             });
             socket.on('connect', () => {
                 socket.on('joinAccepted', (chatHistory) => {
-                    $roomInfo.connected = true;
+                    $roomInfo.ready = true;
                     $roomInfo.chat = chatHistory;
                     console.log(chatHistory);
 
@@ -41,6 +42,13 @@
                     video: true,
                     audio: true
                 }).then((myStream: MediaStream) => {
+                    for (const track of myStream.getTracks()) {
+                        if (track.kind === 'audio' && !$streamInfo.audio)
+                            track.enabled = false;
+                        if (track.kind === 'video' && !$streamInfo.video)
+                            track.enabled = false;
+                    }
+
                     myVideo.srcObject = myStream;
                     myVideo.muted = true;
                     myVideo.addEventListener('loadedmetadata', () => {
@@ -59,10 +67,10 @@
                         });
                     });
 
-                    socket.on('userJoined', (userID) => handleUserConnection(userID, myStream));
+                    socket.on('userJoined', (userID, userName) => handleUserConnection(userID, myStream));
                     socket.on('userLeaved', (userID) => handleUserLeave(userID));
 
-                    socket.emit('joinRoom', $roomInfo.id, id);
+                    socket.emit('joinRoom', $roomInfo.id, id, $roomInfo.user);
                 });
             });
             socket.on('connect_error', (err) => {
@@ -117,6 +125,7 @@
     function handleUserLeave(userID: string) {
         delete $roomInfo.members[userID];
         $roomInfo.members = $roomInfo.members;
+        document.querySelector<HTMLVideoElement>(`[id="${userID}"]`)?.remove();
     }
 
     /**

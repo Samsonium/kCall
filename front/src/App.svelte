@@ -3,25 +3,28 @@
   import {roomInfo} from './utils/store';
   import Room from './lib/Room.svelte';
   import Lobby from './lib/Lobby.svelte';
+  import Prebath from './lib/Prebath.svelte';
 
   onMount(() => {
     const params = new URLSearchParams(location.search);
     if (params.has('user') && params.has('room')) {
       roomInfo.set({
-        connected: false,
+        ready: false,
         id: params.get('room'),
         user: params.get('user'),
         members: {}
       });
     }
-
-    console.log($roomInfo);
   });
 </script>
 
 <main>
   {#if $roomInfo}
-    <Room/>
+    {#if $roomInfo.ready}
+      <Room/>
+    {:else}
+      <Prebath/>
+    {/if}
   {:else}
     <Lobby/>
   {/if}

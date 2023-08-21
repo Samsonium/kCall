@@ -12,7 +12,7 @@ export const roomInfo = writable<{
     /**
      * Is user connected
      */
-    connected: boolean;
+    ready: boolean;
 
     /** Room chat */
     chat?: {
@@ -26,3 +26,11 @@ export const roomInfo = writable<{
     };
 
 } | null>(null);
+
+export const streamInfo = writable<{
+    audio: boolean,
+    video: boolean
+}>({
+    video: true,
+    audio: true
+});
