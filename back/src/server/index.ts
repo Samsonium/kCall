@@ -1,3 +1,4 @@
+import {ExpressPeerServer} from 'peer';
 import {Server} from 'http';
 import express from 'express';
 
@@ -11,5 +12,6 @@ export default class KCallServer {
     constructor() {
         const app = express();
         this._server = new Server(app);
+        app.use('/peer', ExpressPeerServer(this._server));
     }
 }
