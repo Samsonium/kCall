@@ -1,4 +1,5 @@
 import {writable} from 'svelte/store';
+import type {MediaConnection} from 'peerjs';
 
 export const roomInfo = writable<{
 
@@ -20,6 +21,8 @@ export const roomInfo = writable<{
     }[];
 
     /** Users list */
-    members?: string[];
+    members?: {
+        [id: string]: MediaConnection
+    };
 
 } | null>(null);
