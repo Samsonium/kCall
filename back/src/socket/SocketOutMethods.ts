@@ -17,6 +17,12 @@ export default interface SocketOutMethods extends SocketEventsMap {
     userJoined: (userID: string) => void;
 
     /**
+     * User leaves the room
+     * @param userID
+     */
+    userLeaved: (userID: string) => void;
+
+    /**
      * User sends message
      * @param userID
      * @param message

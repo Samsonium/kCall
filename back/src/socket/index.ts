@@ -16,6 +16,10 @@ export default class KCallSocket {
     constructor(server: Server, options?: Partial<ServerOptions>) {
         this._io = new SocketIOServer(server, {
             allowEIO3: true,
+            path: '/socket',
+            cors: {
+                origin: '*'
+            },
             ...(options ?? {})
         });
         this.chats = new Map();
@@ -48,6 +52,8 @@ export default class KCallSocket {
                 // TODO
 
                 socket.on('disconnect', () => {
+                    this.io.to(roomID).emit('userLeaved', userID);
+
                     Logger.instance.info(`[${socket.id}][${userID}]: DISCONNECTED`)
                 });
             });
