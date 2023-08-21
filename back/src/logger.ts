@@ -40,6 +40,13 @@ export default class Logger {
     }
 
     /**
+     * Close write stream
+     */
+    public close(): void {
+        this.fileStream?.close();
+    }
+
+    /**
      * Get datetime info for log printing
      */
     private getDateTime(): string {

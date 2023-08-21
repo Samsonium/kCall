@@ -3,6 +3,7 @@ import SocketInMethods from './SocketInMethods';
 import SocketData from './SocketData';
 import {Server as SocketIOServer, ServerOptions} from 'socket.io';
 import {Server} from 'http';
+import Logger from '../logger';
 
 /**
  * Socket server implementation for kCall backend service
@@ -22,10 +23,10 @@ export default class KCallSocket {
 
     public setup(): void {
         this._io.on('connection', (socket) => {
-            console.log(`[${socket.id}]: CONNECTED`)
+            Logger.instance.info(`[${socket.id}]: CONNECTED`)
 
             socket.on('joinRoom', (roomID, userID) => {
-                console.log(`[${socket.id}][${userID}]: JOINS ROOM ${roomID}`);
+                Logger.instance.info(`[${socket.id}][${userID}]: JOINS ROOM ${roomID}`);
                 socket.join(roomID);
                 socket.to(roomID).emit('userJoined', userID);
 
@@ -36,7 +37,7 @@ export default class KCallSocket {
 
                 // Send message
                 socket.on('sendMessage', (message) => {
-                    console.log(`[${socket.id}][${userID}]: MESSAGE TO ROOM ${roomID} -> ${message}`)
+                    Logger.instance.info(`[${socket.id}][${userID}]: MESSAGE TO ROOM ${roomID} -> ${message}`)
                     this.io.to(roomID).emit('newMessage', userID, message);
                     this.chats.get(roomID).push({
                         name: userID,
@@ -47,7 +48,7 @@ export default class KCallSocket {
                 // TODO
 
                 socket.on('disconnect', () => {
-                    console.log(`[${socket.id}][${userID}]: DISCONNECTED`)
+                    Logger.instance.info(`[${socket.id}][${userID}]: DISCONNECTED`)
                 });
             });
         });
