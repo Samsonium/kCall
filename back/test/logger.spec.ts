@@ -24,7 +24,7 @@ describe('Logger util', () => {
         expect(existsSync(resolve('./logs'))).toBe(true);
     });
     it('Creates log files', () => new Promise<void>(done => {
-        new Promise(r => setTimeout(r, 1000)).then(() => {
+        new Promise(r => setTimeout(r, 100)).then(() => {
             const dirFiles = readdirSync(resolve('./logs'));
             expect(dirFiles.length).toBeGreaterThan(0);
             done();

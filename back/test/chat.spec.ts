@@ -13,8 +13,8 @@ describe('Room chat', () => {
     const sock2ID = v4();
 
     it('Connect', () => new Promise<void>(done => {
-        socket1 = io('ws://localhost:7000');
-        socket2 = io('ws://localhost:7000');
+        socket1 = io('ws://localhost:7000', { path: '/socket' });
+        socket2 = io('ws://localhost:7000', { path: '/socket' });
 
         socket1.once('connect', () => {
             expect(socket1.connected).toBe(true);
@@ -26,12 +26,12 @@ describe('Room chat', () => {
         socket1.once('joinAccepted', () => {
             done();
         });
-        socket1.emit('joinRoom', randomRoomId, sock1ID);
+        socket1.emit('joinRoom', randomRoomId, sock1ID, 'Socket 1');
     }));
 
     it('Send message', () => new Promise<void>(done => {
-        socket1.once('newMessage', (userID, message) => {
-            expect(userID).toBe(sock1ID);
+        socket1.once('newMessage', (name, message) => {
+            expect(name).toBe('Socket 1');
             expect(message).toBe('Hello!');
             done();
         });
@@ -44,12 +44,12 @@ describe('Room chat', () => {
             expect(chatHistory[0].message).toBe('Hello!');
             done();
         });
-        socket2.emit('joinRoom', randomRoomId, sock2ID);
+        socket2.emit('joinRoom', randomRoomId, sock2ID, 'Socket 2');
     }));
 
     it('Send message from second and check on first', () => new Promise<void>(done => {
-        socket1.once('newMessage', (userID, message) => {
-            expect(userID).toBe(sock2ID);
+        socket1.once('newMessage', (name, message) => {
+            expect(name).toBe('Socket 2');
             expect(message).toBe(message);
             done();
         });

@@ -7,7 +7,7 @@ describe('Room join and leave', () => {
     let socket: Socket<SocketInMethods, SocketOutMethods>;
 
     it('Connect', () => {
-        socket = io('ws://localhost:7000');
+        socket = io('ws://localhost:7000', { path: '/socket' });
         expect(socket).toBeInstanceOf(Socket);
     })
     it('Join room', () => new Promise<void>(done => {
@@ -15,6 +15,6 @@ describe('Room join and leave', () => {
             expect(true).toBe(true);
             done();
         });
-        socket.emit('joinRoom', '123', '321');
+        socket.emit('joinRoom', '123', '321', 'test');
     }));
 });
