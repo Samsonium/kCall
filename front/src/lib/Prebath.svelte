@@ -42,7 +42,7 @@
 <div class="page">
     <div class="prebath">
         <h3>Подготовка к встрече</h3>
-        <video bind:this={video}></video>
+        <video bind:this={video} muted/>
         <div class="controls">
             <button class="start" on:click={joinRoom}>Начать встречу</button>
             <button class="control-button"
