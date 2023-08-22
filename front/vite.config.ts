@@ -6,6 +6,6 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [svelte()],
   build: {
-    outDir: resolve('../back/public')
+    outDir: resolve('../build/public')
   }
 })
