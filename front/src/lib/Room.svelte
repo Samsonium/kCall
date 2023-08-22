@@ -16,9 +16,14 @@
         peer = new Peer();
 
         peer.on('open', id => {
-            socket = io(`${location.host}`, {
+            const connectionPath = import.meta.env.DEV
+                ? `${location.hostname}:7000`
+                : `${location.host}`;
+
+            socket = io(connectionPath, {
                 path: '/socket'
             });
+
             socket.on('connect', () => {
                 socket.on('joinAccepted', (chatHistory) => {
                     $roomInfo.ready = true;
@@ -62,11 +67,11 @@
                         });
                     });
 
-                    socket.on('userJoined', (userID, userName) => handleUserConnection(userID, myStream));
+                    socket.on('userJoined', (userID, displayName) => handleUserConnection(userID, myStream));
                     socket.on('userLeaved', (userID) => handleUserLeave(userID));
                 }).catch((err) => console.error);
 
-                socket.on('userJoined', (userID, userName) => handleUserConnection(userID, new MediaStream()));
+                socket.on('userJoined', (userID, displayName) => handleUserConnection(userID, new MediaStream()));
                 socket.emit('joinRoom', $roomInfo.id, id, $roomInfo.user);
             });
             socket.on('connect_error', (err) => {
