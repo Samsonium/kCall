@@ -4,9 +4,12 @@
     "target": "ESNext",
     "sourceMap": true,
     "esModuleInterop": true,
-    "composite": true
+    "outDir": "../build"
   },
   "exclude": [
     "node_modules"
+  ],
+  "include": [
+    "src/**/*"
   ]
 }
