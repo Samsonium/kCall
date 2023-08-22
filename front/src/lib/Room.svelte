@@ -16,8 +16,7 @@
         peer = new Peer({
             host: 'localhost',
             path: '/peer',
-            port: 7000,
-            secure: true
+            port: 7000
         });
 
         peer.on('open', id => {
@@ -38,7 +37,7 @@
                     });
                 });
 
-                navigator.mediaDevices.getUserMedia({
+                navigator?.mediaDevices?.getUserMedia({
                     video: true,
                     audio: true
                 }).then((myStream: MediaStream) => {
@@ -69,9 +68,10 @@
 
                     socket.on('userJoined', (userID, userName) => handleUserConnection(userID, myStream));
                     socket.on('userLeaved', (userID) => handleUserLeave(userID));
+                }).catch((err) => console.error);
 
-                    socket.emit('joinRoom', $roomInfo.id, id, $roomInfo.user);
-                });
+                socket.on('userJoined', (userID, userName) => handleUserConnection(userID, new MediaStream()));
+                socket.emit('joinRoom', $roomInfo.id, id, $roomInfo.user);
             });
             socket.on('connect_error', (err) => {
                 console.log('Cannot connect:', err);
