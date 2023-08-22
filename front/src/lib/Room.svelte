@@ -6,6 +6,8 @@
     import {type MediaConnection, Peer} from 'peerjs';
     import type SocketOutMethods from '../utils/SocketOutMethods';
     import type SocketInMethods from '../utils/SocketInMethods';
+    import VideoBox from './Room/VideoBox.svelte';
+    import {SignOut} from 'phosphor-svelte';
 
     let peer: Peer;
     let socket: Socket<SocketOutMethods, SocketInMethods>;
@@ -57,21 +59,22 @@
 
                     // Setup peer call event
                     peer.on('call', (call: MediaConnection) => {
+                        const userID = call.connectionId;
                         call.answer(myStream);
-                        const video = document.createElement('video');
                         call.on('stream', (otherStream: MediaStream) => {
-                            addVideoStream(video, otherStream);
-                        });
-                        call.on('close', () => {
-                            video.remove();
+                            socket.emit('whoIsIt', userID, (result: { id: string, name: string }) => {
+                                if (result.id === userID) {
+                                    handleUserConnection(userID, otherStream, result.name);
+                                }
+                            });
                         });
                     });
 
-                    socket.on('userJoined', (userID, displayName) => handleUserConnection(userID, myStream));
+                    socket.on('userJoined', (userID, displayName) => handleUserConnection(userID, myStream, displayName));
                     socket.on('userLeaved', (userID) => handleUserLeave(userID));
-                }).catch((err) => console.error);
+                }).catch((err) => console.error(err));
 
-                socket.on('userJoined', (userID, displayName) => handleUserConnection(userID, new MediaStream()));
+                socket.on('userJoined', (userID, displayName) => handleUserConnection(userID, new MediaStream(), displayName));
                 socket.emit('joinRoom', $roomInfo.id, id, $roomInfo.user);
             });
             socket.on('connect_error', (err) => {
@@ -92,11 +95,12 @@
     /**
      * Adds new media stream
      * @param container
+     * @param video
      * @param stream
      */
-    function addVideoStream(container: HTMLVideoElement, stream: MediaStream) {
-        container.srcObject = stream;
-        container.addEventListener('loadedmetadata', () => container.play());
+    function addVideoStream(container: HTMLDivElement, video: HTMLVideoElement, stream: MediaStream) {
+        video.srcObject = stream;
+        video.addEventListener('loadedmetadata', () => video.play());
         videoGrid.append(container);
     }
 
@@ -104,19 +108,34 @@
      * New user in room event handler
      * @param userID
      * @param stream
+     * @param name Display name of the user
      */
-    function handleUserConnection(userID: string, stream: MediaStream) {
+    function handleUserConnection(userID: string, stream: MediaStream, name: string) {
         const call = peer.call(userID, stream);
+        const box = document.createElement('div');
+        box.style.display = 'contents';
+
         const video = document.createElement('video');
-        video.id = userID;
+        const component = new VideoBox({
+            target: box,
+            props: {
+                name,
+                video
+            }
+        });
+
         call.on('stream', (userStream: MediaStream) => {
-            addVideoStream(video, userStream);
+            addVideoStream(box, video, userStream);
             $roomInfo.members[userID] = call;
         });
-        call.on('close', () => {
-            video.remove();
-            delete $roomInfo.members[userID];
-            $roomInfo.members = $roomInfo.members;
+        socket.on('userLeaved', (leavedUserID) => {
+            if (userID === leavedUserID) {
+                if (video || component) {
+                    video?.remove();
+                    component?.$destroy();
+                    delete $roomInfo.members[userID];
+                }
+            }
         });
     }
 
@@ -148,19 +167,28 @@
 
 <div class="room">
     <div class="header">
-        <h3>KAMAZ Call &horbar; {$roomInfo.id}</h3>
-        <button class="exit" on:click={leaveRoom}>Отключиться</button>
+        <h3>
+            kCall
+            &horbar;
+            {$roomInfo.id}
+        </h3>
+        <button class="exit" on:click={leaveRoom}>
+            <SignOut size={24} color="white" weight="bold" />
+            <span class="on-pc">Отключиться</span>
+        </button>
     </div>
     <div class="video-box">
-        <div class="videos" bind:this={videoGrid}></div>
+        <div class="video-grid">
+            <div class="videos" bind:this={videoGrid}></div>
+        </div>
         <div class="self-video">
-            <video bind:this={myVideo}></video>
+            <video bind:this={myVideo} muted></video>
         </div>
     </div>
     <div class="chat-box">
         <div class="history">
             <div class="history-scrollable">
-                {#each chat as message, i}
+                {#each chat as message}
                     {#if message?.message?.trim()}
                         <div class="chat-message" transition:slide={{duration:150}}>
                             <div class="username">{message.name}</div>
@@ -183,7 +211,7 @@
       height: 100%;
       max-height: 100%;
       display: grid;
-      grid-template-columns: 1fr 500px;
+      grid-template-columns: 1fr minmax(auto, 500px);
       grid-template-rows: 64px 1fr;
       background: #1c1f23;
 
@@ -216,6 +244,10 @@
           font: 500 14px Inter, Roboto, sans-serif;
           transition: background .2s cubic-bezier(.25, 0, 0, 1);
 
+          span.on-pc {
+            display: inline-block;
+          }
+
           &:hover {
             background: #b42c2c;
           }
@@ -230,21 +262,16 @@
         grid-column: 1;
         grid-row: 2;
 
-        .videos {
+        .video-grid {
           width: 100%;
           height: 100%;
-          padding: 32px;
-          display: grid;
-          grid-template-columns: auto;
-          grid-template-rows: auto;
+          overflow: hidden;
 
-          :global(video) {
-            flex: 1;
-            aspect-ratio: 16 / 9;
-            background: #21272d;
-            margin: 8px;
-            border-radius: 16px;
-            object-fit: cover;
+          .videos {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-flow: row wrap;
           }
         }
 
@@ -254,6 +281,7 @@
           bottom: 16px;
           right: 16px;
           width: 400px;
+          max-width: calc(100vw - 32px);
           aspect-ratio: 16 / 9;
           overflow: hidden;
           border-radius: 16px;
@@ -365,6 +393,25 @@
               background: #1355a9;
             }
           }
+        }
+      }
+    }
+
+    @media only screen and (max-width: 750px) {
+      .on-pc {
+        display: none !important;
+      }
+
+      .chat-box {
+        display: none !important;
+      }
+
+      .video-box {
+        grid-column-start: 1 !important;
+        grid-column-end: col2-end !important;
+
+        .videos {
+          height: calc(100% - ((100vw - 32px) / 16 * 9));
         }
       }
     }
