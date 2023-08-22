@@ -1,13 +1,29 @@
-import {describe, it, expect} from 'vitest';
+import {describe, it, expect, beforeAll, afterAll} from 'vitest';
 import {default as io, Socket} from 'socket.io-client';
 import SocketInMethods from '../src/socket/SocketInMethods';
 import SocketOutMethods from '../src/socket/SocketOutMethods';
+import KCallSocket from '../src/socket';
+import KCallServer from '../src/server';
 
 describe('Room join and leave', () => {
     let socket: Socket<SocketInMethods, SocketOutMethods>;
+    let ksock: KCallSocket;
+    let kserv: KCallServer;
+
+    beforeAll(() => {
+        kserv = new KCallServer();
+        ksock = new KCallSocket(kserv.server);
+        ksock.setup();
+        kserv.server.listen(7002);
+    });
+
+    afterAll(() => {
+        ksock.io.close();
+        kserv.server.close();
+    });
 
     it('Connect', () => {
-        socket = io('ws://localhost:7000', { path: '/socket' });
+        socket = io('ws://localhost:7002', { path: '/socket' });
         expect(socket).toBeInstanceOf(Socket);
     })
     it('Join room', () => new Promise<void>(done => {

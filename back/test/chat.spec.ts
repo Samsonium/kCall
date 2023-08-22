@@ -1,8 +1,10 @@
 import {v4} from 'uuid';
-import {describe, it, expect} from 'vitest';
+import {describe, it, expect, beforeAll, afterAll} from 'vitest';
 import {default as io, Socket} from 'socket.io-client';
 import SocketInMethods from '../src/socket/SocketInMethods';
 import SocketOutMethods from '../src/socket/SocketOutMethods';
+import KCallSocket from '../src/socket';
+import KCallServer from '../src/server';
 
 describe('Room chat', () => {
     let socket1: Socket<SocketInMethods, SocketOutMethods>;
@@ -11,10 +13,24 @@ describe('Room chat', () => {
     const randomRoomId = v4();
     const sock1ID = v4();
     const sock2ID = v4();
+    let ksock: KCallSocket;
+    let kserv: KCallServer;
+
+    beforeAll(() => {
+        kserv = new KCallServer();
+        ksock = new KCallSocket(kserv.server);
+        ksock.setup();
+        kserv.server.listen(7001);
+    });
+
+    afterAll(() => {
+        ksock.io.close();
+        kserv.server.close();
+    });
 
     it('Connect', () => new Promise<void>(done => {
-        socket1 = io('ws://localhost:7000', { path: '/socket' });
-        socket2 = io('ws://localhost:7000', { path: '/socket' });
+        socket1 = io('ws://localhost:7001', { path: '/socket' });
+        socket2 = io('ws://localhost:7001', { path: '/socket' });
 
         socket1.once('connect', () => {
             expect(socket1.connected).toBe(true);

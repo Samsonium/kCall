@@ -1,4 +1,4 @@
-import {describe, it, vi, expect, afterEach, afterAll} from 'vitest';
+import {describe, it, vi, expect, afterEach, afterAll, beforeAll} from 'vitest';
 import {existsSync, readdirSync} from 'fs';
 import {resolve} from 'path';
 import Logger from '../src/logger';
@@ -11,10 +11,6 @@ describe('Logger util', () => {
     afterEach(() => {
         logMock.mockClear()
     });
-
-    afterAll(() => {
-        logMock.mockReset();
-    })
 
     it('Instantiates without problems', () => {
         logger = Logger.instance;
