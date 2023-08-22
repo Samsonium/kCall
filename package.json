@@ -1,6 +1,9 @@
 {
   "name": "kcall",
   "private": true,
+  "scripts": {
+    "build": "yarn workspace back build && yarn workspace front build"
+  },
   "workspaces": [
     "./front",
     "./back"
