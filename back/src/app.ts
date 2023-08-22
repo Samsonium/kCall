@@ -5,7 +5,7 @@ import Logger from './logger';
 let kserv: KCallServer;
 let ksock: KCallSocket;
 
-function main() {
+function app() {
     kserv = new KCallServer();
     ksock = new KCallSocket(kserv.server);
 
@@ -16,7 +16,7 @@ function main() {
 }
 
 try {
-    main();
+    app();
 } catch (e) {
     console.log(`[SERVER]: RUNTIME ERROR (${e.message})`);
     ksock?.io?.close();
