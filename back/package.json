@@ -8,7 +8,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "nodemon src/main.ts",
+    "dev": "nodemon src/app.ts",
+    "build": "tsc",
     "test": "vitest run"
   },
   "dependencies": {
