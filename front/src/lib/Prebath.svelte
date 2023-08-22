@@ -2,6 +2,8 @@
     import {onMount} from 'svelte';
     import {roomInfo, streamInfo} from '../utils/store';
 
+    import {Microphone, Webcam} from 'phosphor-svelte';
+
     let video: HTMLVideoElement;
     let stream: MediaStream;
 
@@ -42,18 +44,18 @@
         <h3>Подготовка к встрече</h3>
         <video bind:this={video}></video>
         <div class="controls">
+            <button class="start" on:click={joinRoom}>Начать встречу</button>
             <button class="control-button"
                     class:disabled={!isAudioEnabled}
                     on:click={() => isAudioEnabled = !isAudioEnabled}>
-                Микрофон
+                <Microphone weight="bold" color="{isAudioEnabled ? 'limegreen' : 'orangered'}" size={24} />
             </button>
             <button class="control-button"
                     class:disabled={!isVideoEnabled}
                     on:click={() => isVideoEnabled = !isVideoEnabled}>
-                Видео
+                <Webcam weight="bold" color="{isVideoEnabled ? 'limegreen' : 'orangered'}" size={24} />
             </button>
         </div>
-        <button class="start" on:click={joinRoom}>Начать встречу</button>
     </div>
 </div>
 
