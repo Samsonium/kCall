@@ -2,7 +2,7 @@
     import CoverImg from '../assets/cover.png';
 
     let name: string = localStorage.getItem('username') ?? '';
-    let roomID: string = '';
+    let roomID: string = (new URLSearchParams(location.search)).get('room') ?? '';
 
     function joinRoom() {
         if (!name.trim() || !roomID.trim()) {
