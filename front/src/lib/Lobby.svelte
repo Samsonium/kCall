@@ -106,6 +106,8 @@
             input {
               border-top-right-radius: 0;
               border-bottom-right-radius: 0;
+              flex: 1;
+              min-width: 10px;
             }
           }
         }
@@ -134,6 +136,28 @@
           width: 100%;
           height: 100%;
           object-fit: cover;
+        }
+      }
+    }
+
+    @media only screen and (max-width: 750px) {
+      form {
+        height: 100%;
+        flex-flow: column-reverse;
+        border-radius: 0;
+        border: none;
+
+        .fields {
+          flex: 1;
+        }
+
+        .cover {
+          flex: .5;
+          height: 32px;
+
+          img {
+            object-position: top;
+          }
         }
       }
     }

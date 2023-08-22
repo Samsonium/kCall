@@ -147,4 +147,10 @@
     }
   }
 
+  @media only screen and (max-width: 750px) {
+    .prebath {
+      padding: 16px;
+      justify-content: flex-start;
+    }
+  }
 </style>
