@@ -3,7 +3,6 @@
 # Dirs
 !/front
 !/back
-!/docs
 
 # Files
 !/.gitignore
