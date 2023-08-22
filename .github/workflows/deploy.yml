@@ -36,5 +36,5 @@ jobs:
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: 289fc86d61c8.hosting.myjino.ru
-          username: j9047948
-          password: y4sJQqraA)cv
+          username: j9047948_deploy
+          password: ${{ secrets.ftp_password }}
