@@ -38,3 +38,4 @@ jobs:
           server: 289fc86d61c8.hosting.myjino.ru
           username: j9047948_deploy
           password: ${{ secrets.ftp_password }}
+          local-dir: build
