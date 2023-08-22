@@ -13,14 +13,10 @@
     let videoGrid: HTMLDivElement;
 
     onMount(() => {
-        peer = new Peer({
-            host: 'localhost',
-            path: '/peer',
-            port: 7000
-        });
+        peer = new Peer();
 
         peer.on('open', id => {
-            socket = io(`ws://${location.hostname}:7000`, {
+            socket = io(`${location.host}`, {
                 path: '/socket'
             });
             socket.on('connect', () => {
