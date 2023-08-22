@@ -49,10 +49,20 @@ export default class KCallSocket {
                     });
                 });
 
+                // Retrieve user data by its id
+                socket.on('whoIsIt', (userID, callback) => {
+                    Logger.instance.info(`[${socket.id}][${userID}]: LOOKING FOR ${userID} name`);
+                    callback({
+                        id: userID,
+                        name: 'This is this'
+                    });
+                });
+
                 // TODO
 
                 socket.on('disconnect', () => {
                     this.io.to(roomID).emit('userLeaved', userID);
+                    socket.leave(roomID);
 
                     Logger.instance.info(`[${socket.id}][${userID}]: DISCONNECTED`)
                 });
