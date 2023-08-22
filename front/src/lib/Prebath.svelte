@@ -2,6 +2,8 @@
     import {onMount} from 'svelte';
     import {roomInfo, streamInfo} from '../utils/store';
 
+    import {Microphone, Webcam} from 'phosphor-svelte';
+
     let video: HTMLVideoElement;
     let stream: MediaStream;
 
@@ -9,16 +11,15 @@
     $: changeTrack('video', isVideoEnabled);
 
     let isAudioEnabled = true;
-    $: changeTrack('audio', isAudioEnabled);
 
     onMount(() => {
         navigator.mediaDevices.getUserMedia({
             video: true,
-            audio: true
+            audio: false
         }).then((_stream: MediaStream) => {
             stream = _stream;
             video.srcObject = _stream;
-            video.muted = false;
+            video.muted = true;
             video.addEventListener('loadedmetadata', () => video.play());
         })
     });
@@ -41,20 +42,20 @@
 <div class="page">
     <div class="prebath">
         <h3>Подготовка к встрече</h3>
-        <video bind:this={video}></video>
+        <video bind:this={video} muted/>
         <div class="controls">
+            <button class="start" on:click={joinRoom}>Начать встречу</button>
             <button class="control-button"
                     class:disabled={!isAudioEnabled}
                     on:click={() => isAudioEnabled = !isAudioEnabled}>
-                Микрофон
+                <Microphone weight="bold" color="{isAudioEnabled ? 'limegreen' : 'orangered'}" size={24} />
             </button>
             <button class="control-button"
                     class:disabled={!isVideoEnabled}
                     on:click={() => isVideoEnabled = !isVideoEnabled}>
-                Видео
+                <Webcam weight="bold" color="{isVideoEnabled ? 'limegreen' : 'orangered'}" size={24} />
             </button>
         </div>
-        <button class="start" on:click={joinRoom}>Начать встречу</button>
     </div>
 </div>
 
@@ -94,38 +95,37 @@
       flex-flow: row nowrap;
 
       button.control-button {
-        flex: 1;
-        height: 32px;
-        background: #efefef;
+        width: 48px;
+        height: 48px;
+        background: #eeffe9;
         cursor: pointer;
-        border: 1px solid #dfdfdf;
+        border: 2px solid limegreen;
+        border-radius: 16px;
+        margin-left: 8px;
+        box-shadow: 0 8px 16px rgba(green, .1);
         transition: background .2s cubic-bezier(.25, 0, 0, 1),
-                    opacity .2s cubic-bezier(.25, 0, 0, 1);
+                    border .2s cubic-bezier(.25, 0, 0, 1),
+                    box-shadow .2s cubic-bezier(.25, 0, 0, 1),
+                    transform .2s cubic-bezier(.25, 0, 0, 1);
 
         &.disabled {
-          opacity: .5;
-        }
-
-        &:first-child {
-          border-top-left-radius: 8px;
-          border-bottom-left-radius: 8px;
-        }
-
-        &:last-child {
-          border-top-right-radius: 8px;
-          border-bottom-right-radius: 8px;
+          background: #ffe7e7;
+          border-color: orangered;
+          box-shadow: 0 8px 16px rgba(red, .1);
         }
 
         &:hover {
-          background: #dfdfdf;
+          transform: scale(1.02);
+        }
+
+        &:active {
+          transform: scale(0.98);
         }
       }
     }
 
     button.start {
-      width: 100%;
-      max-width: 500px;
-      margin: 0 16px;
+      flex: 1;
       height: 48px;
       background: #167bff;
       cursor: pointer;
@@ -147,4 +147,10 @@
     }
   }
 
+  @media only screen and (max-width: 750px) {
+    .prebath {
+      padding: 16px;
+      justify-content: flex-start;
+    }
+  }
 </style>
