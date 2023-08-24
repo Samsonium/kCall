@@ -4,10 +4,11 @@
     import {slide} from 'svelte/transition';
     import {io, Socket} from 'socket.io-client';
     import {type MediaConnection, Peer} from 'peerjs';
+    import {SignOut, Microphone, Webcam, Share} from 'phosphor-svelte';
+    import Notification from '../utils/Notification';
+    import VideoBox from './Room/VideoBox.svelte';
     import type SocketOutMethods from '../utils/SocketOutMethods';
     import type SocketInMethods from '../utils/SocketInMethods';
-    import VideoBox from './Room/VideoBox.svelte';
-    import {SignOut, Microphone, Webcam} from 'phosphor-svelte';
 
     let peer: Peer;
     let socket: Socket<SocketOutMethods, SocketInMethods>;
@@ -80,7 +81,7 @@
             });
             socket.on('connect_error', (err) => {
                 console.log('Cannot connect:', err);
-                alert('Ошибка подключения!');
+                Notification.send(Notification.Type.Error, 'Ошибка!', 'Не удалось подключиться')
                 socket.close();
             });
         });
@@ -104,6 +105,20 @@
             if (track.kind !== type) continue;
             track.enabled = value;
         }
+    }
+
+    /**
+     * Copy invitation link to clipboard
+     */
+    function copyLink() {
+        const protocol = location.protocol;
+        const host = location.host;
+        const room = $roomInfo.id;
+        navigator.clipboard.writeText(`${protocol}://${host}/?room=${room}`).then(() => {
+            Notification.send(Notification.Type.Success, 'Готово!', 'Ссылка успешно скопирована');
+        }).catch(() => {
+            Notification.send(Notification.Type.Error, 'Ошибка!', 'Не удалось скопировать ссылку');
+        });
     }
 
     /**
@@ -204,10 +219,15 @@
         <h3>
             {$roomInfo.id}
         </h3>
-        <button class="exit" on:click={leaveRoom}>
-            <SignOut size={24} color="white" weight="bold" />
-            <span class="on-pc">Отключиться</span>
-        </button>
+        <div style="display:flex;flex-flow:row nowrap">
+            <button class="share" on:click={copyLink.bind(this)}>
+                <Share size={24} color="white" weight="bold" />
+            </button>
+            <button class="exit" on:click={leaveRoom}>
+                <SignOut size={24} color="white" weight="bold" />
+                <span class="on-pc">Отключиться</span>
+            </button>
+        </div>
     </div>
     <div class="video-box">
         <div class="video-grid">
@@ -298,6 +318,19 @@
 
           &:hover {
             background: #b42c2c;
+          }
+        }
+
+        button.share {
+          padding: 8px;
+          background: #167bff;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          margin-right: 8px;
+
+          &:hover {
+            background: #1355a9;
           }
         }
       }
