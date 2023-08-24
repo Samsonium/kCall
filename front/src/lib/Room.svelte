@@ -235,17 +235,21 @@
         }
 
         button.exit {
-          padding: 12px 16px;
+          padding: 8px 16px;
           background: #ff4040;
           color: white;
           border: none;
           border-radius: 8px;
           cursor: pointer;
+          display: flex;
+          flex-flow: row nowrap;
+          align-items: center;
           font: 500 14px Inter, Roboto, sans-serif;
           transition: background .2s cubic-bezier(.25, 0, 0, 1);
 
           span.on-pc {
             display: inline-block;
+            margin-left: 8px;
           }
 
           &:hover {
