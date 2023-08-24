@@ -14,7 +14,7 @@
 
     function generateID() {
         const dict = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        const mask = 'xxxx-xxxx-xxxx-xxxx';
+        const mask = 'kcall-xxxx-xxxx-xxxx-xxxx';
         roomID = mask.replaceAll(/x/g, () => dict.charAt(Math.floor(Math.random() * dict.length)));
     }
 </script>
@@ -22,7 +22,7 @@
 <div class="page">
     <form on:submit|preventDefault={joinRoom}>
         <div class="fields">
-            <h2>Добро пожаловать в<br/><b>KAMAZ Call</b></h2>
+            <h2>Добро пожаловать в<br/><b>kCall</b></h2>
 
             <div class="field">
                 <label for="name">Как Вас зовут?</label>
