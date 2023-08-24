@@ -53,7 +53,8 @@
       position: relative;
       z-index: 3;
       flex: 1;
-      max-width: 100%;
+      max-width: 1000px;
+      width: 100%;
       min-width: 350px;
       height: fit-content;
       border-radius: 16px;
@@ -67,16 +68,16 @@
       div.settings {
         position: absolute;
         z-index: 2;
-        top: 0;
-        left: 0;
-        right: 0;
+        right: 16px;
         bottom: 64px;
+        padding: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
+        border: 1px solid rgba(white, .5);
+        border-radius: 16px 16px 0 16px;
         background: rgba(black, .5);
         backdrop-filter: blur(8px);
-        border-bottom: 2px solid rgba(white, .5);
 
         .form {
           width: 100%;
