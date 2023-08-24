@@ -7,12 +7,19 @@
     import type SocketOutMethods from '../utils/SocketOutMethods';
     import type SocketInMethods from '../utils/SocketInMethods';
     import VideoBox from './Room/VideoBox.svelte';
-    import {SignOut} from 'phosphor-svelte';
+    import {SignOut, Microphone, Webcam} from 'phosphor-svelte';
 
     let peer: Peer;
     let socket: Socket<SocketOutMethods, SocketInMethods>;
     let myVideo: HTMLVideoElement;
+    let myStream: MediaStream;
     let videoGrid: HTMLDivElement;
+
+    let isVideoEnabled = $streamInfo.video
+    $: changeTrack('video', isVideoEnabled)
+
+    let isAudioEnabled = $streamInfo.audio
+    $: changeTrack('audio', isAudioEnabled)
 
     onMount(() => {
         peer = new Peer();
@@ -43,38 +50,32 @@
                 navigator?.mediaDevices?.getUserMedia({
                     video: true,
                     audio: true
-                }).then((myStream: MediaStream) => {
-                    for (const track of myStream.getTracks()) {
+                }).then((_myStream: MediaStream) => {
+                    for (const track of _myStream.getTracks()) {
                         if (track.kind === 'audio' && !$streamInfo.audio)
                             track.enabled = false;
                         if (track.kind === 'video' && !$streamInfo.video)
                             track.enabled = false;
                     }
 
-                    myVideo.srcObject = myStream;
+                    myStream = _myStream;
+                    myVideo.srcObject = _myStream;
                     myVideo.muted = true;
                     myVideo.addEventListener('loadedmetadata', () => {
                         myVideo.play();
                     });
 
-                    // Setup peer call event
-                    peer.on('call', (call: MediaConnection) => {
-                        const userID = call.connectionId;
-                        call.answer(myStream);
-                        call.on('stream', (otherStream: MediaStream) => {
-                            socket.emit('whoIsIt', userID, (result: { id: string, name: string }) => {
-                                if (result.id === userID) {
-                                    handleUserConnection(userID, otherStream, result.name);
-                                }
-                            });
-                        });
+                    // On call from user in a room
+                    peer.on('call', (call: MediaConnection & { meta: { uid: string, name: string } }) => {
+                        handleUserConnection(_myStream).withAnswer(call);
                     });
 
-                    socket.on('userJoined', (userID, displayName) => handleUserConnection(userID, myStream, displayName));
+                    // On new user join
+                    socket.on('userJoined', (userID, displayName) => {
+                        handleUserConnection(_myStream, userID, displayName).withCall();
+                    });
                     socket.on('userLeaved', (userID) => handleUserLeave(userID));
                 }).catch((err) => console.error(err));
-
-                socket.on('userJoined', (userID, displayName) => handleUserConnection(userID, new MediaStream(), displayName));
                 socket.emit('joinRoom', $roomInfo.id, id, $roomInfo.user);
             });
             socket.on('connect_error', (err) => {
@@ -93,6 +94,19 @@
     let message = ''
 
     /**
+     * Change track enable status
+     * @param type
+     * @param value
+     */
+    function changeTrack(type: 'audio' | 'video', value: boolean): void {
+        if (!myStream) return;
+        for (const track of myStream.getTracks()) {
+            if (track.kind !== type) continue;
+            track.enabled = value;
+        }
+    }
+
+    /**
      * Adds new media stream
      * @param container
      * @param video
@@ -106,37 +120,57 @@
 
     /**
      * New user in room event handler
-     * @param userID
      * @param stream
+     * @param userID
      * @param name Display name of the user
      */
-    function handleUserConnection(userID: string, stream: MediaStream, name: string) {
-        const call = peer.call(userID, stream);
-        const box = document.createElement('div');
-        box.style.display = 'contents';
+    function handleUserConnection(stream: MediaStream, userID?: string, name?: string) {
+        const afterCall = (call: MediaConnection & { metadata: { uid: string, name: string }}) => {
+            const uid = userID ?? call.metadata.uid;
+            const uname = name ?? call.metadata.name;
 
-        const video = document.createElement('video');
-        const component = new VideoBox({
-            target: box,
-            props: {
-                name,
-                video
-            }
-        });
+            const box = document.createElement('div');
+            box.style.display = 'contents';
 
-        call.on('stream', (userStream: MediaStream) => {
-            addVideoStream(box, video, userStream);
-            $roomInfo.members[userID] = call;
-        });
-        socket.on('userLeaved', (leavedUserID) => {
-            if (userID === leavedUserID) {
-                if (video || component) {
-                    video?.remove();
-                    component?.$destroy();
-                    delete $roomInfo.members[userID];
+            const video = document.createElement('video');
+            const component = new VideoBox({
+                target: box,
+                props: {
+                    name: uname,
+                    video
                 }
+            });
+
+            call.on('stream', (userStream: MediaStream) => {
+                addVideoStream(box, video, userStream);
+                $roomInfo.members[uid] = call;
+            });
+            socket.on('userLeaved', (leavedUserID) => {
+                if (uid === leavedUserID) {
+                    if (video || component) {
+                        video?.remove();
+                        component?.$destroy();
+                        delete $roomInfo.members[uid];
+                    }
+                }
+            });
+        }
+
+        return {
+            withCall: () => {
+                const call = peer.call(userID, stream, {
+                    metadata: {
+                        uid: userID,
+                        name
+                    }
+                });
+                afterCall(call);
+            },
+            withAnswer: (call: MediaConnection) => {
+                call.answer(stream);
+                afterCall(call);
             }
-        });
+        }
     }
 
     /**
@@ -183,6 +217,18 @@
         </div>
         <div class="self-video">
             <video bind:this={myVideo} muted></video>
+            <div class="controls">
+                <button class="control"
+                        class:disabled={!isAudioEnabled}
+                        on:click={() => isAudioEnabled = !isAudioEnabled}>
+                    <Microphone weight="bold" size={24} color={isAudioEnabled ? 'white' : 'orangered'} />
+                </button>
+                <button class="control"
+                        class:disabled={!isVideoEnabled}
+                        on:click={() => isVideoEnabled = !isVideoEnabled}>
+                    <Webcam weight="bold" size={24} color={isVideoEnabled ? 'white' : 'orangered'} />
+                </button>
+            </div>
         </div>
     </div>
     <div class="chat-box">
@@ -235,17 +281,21 @@
         }
 
         button.exit {
-          padding: 12px 16px;
+          padding: 8px 16px;
           background: #ff4040;
           color: white;
           border: none;
           border-radius: 8px;
           cursor: pointer;
+          display: flex;
+          flex-flow: row nowrap;
+          align-items: center;
           font: 500 14px Inter, Roboto, sans-serif;
           transition: background .2s cubic-bezier(.25, 0, 0, 1);
 
           span.on-pc {
             display: inline-block;
+            margin-left: 8px;
           }
 
           &:hover {
@@ -264,23 +314,27 @@
 
         .video-grid {
           width: 100%;
-          height: 100%;
-          overflow: hidden;
+          height: calc(100vh - 64px);
+          overflow-y: auto;
+          overflow-x: hidden;
 
           .videos {
             width: 100%;
             height: 100%;
             display: flex;
             flex-flow: row wrap;
+            align-items: center;
+            align-content: flex-start;
+            justify-content: center;
           }
         }
 
         .self-video {
-          position: absolute;
+          position: fixed;
           z-index: 9;
           bottom: 16px;
-          right: 16px;
-          width: 400px;
+          left: 16px;
+          height: 200px;
           max-width: calc(100vw - 32px);
           aspect-ratio: 16 / 9;
           overflow: hidden;
@@ -292,6 +346,44 @@
             height: 100%;
             object-fit: cover;
             transform: scaleX(-1);
+          }
+
+          .controls {
+            position: absolute;
+            z-index: 8;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            display: flex;
+            flex-flow: row nowrap;
+            align-items: center;
+            justify-content: center;
+
+            button.control {
+              width: 32px;
+              height: 32px;
+              border-radius: 16px;
+              padding: 0;
+              background: rgba(black, .5);
+              backdrop-filter: blur(8px);
+              border: none;
+              margin: 0 4px;
+              cursor: pointer;
+              transition: transform .2s cubic-bezier(.25, 0, 0, 1),
+                          background .2s cubic-bezier(.25, 0, 0, 1);
+
+              &:hover {
+                transform: scale(1.05);
+              }
+
+              &:active {
+                transform: scale(.95);
+              }
+
+              &.disabled {
+                background: rgba(mix(orangered, black, .5), .25);
+              }
+            }
           }
         }
       }

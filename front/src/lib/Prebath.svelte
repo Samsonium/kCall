@@ -15,7 +15,7 @@
     onMount(() => {
         navigator.mediaDevices.getUserMedia({
             video: true,
-            audio: false
+            audio: true
         }).then((_stream: MediaStream) => {
             stream = _stream;
             video.srcObject = _stream;
