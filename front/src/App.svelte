@@ -4,6 +4,7 @@
   import Room from './lib/Room.svelte';
   import Lobby from './lib/Lobby.svelte';
   import Prebath from './lib/Prebath.svelte';
+  import Notifier from './lib/Notifier/Notifier.svelte';
 
   onMount(() => {
     const params = new URLSearchParams(location.search);
@@ -29,6 +30,7 @@
     <Lobby/>
   {/if}
 </main>
+<Notifier/>
 
 <style lang="scss">
   main {
