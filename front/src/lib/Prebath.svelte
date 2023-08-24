@@ -71,8 +71,8 @@
     h3 {
       width: max-content;
       padding: 0;
-      font: 700 16px Inter, Roboto, sans-serif;
-      color: black;
+      font: 700 24px Inter, Roboto, sans-serif;
+      color: white;
       margin: 0 0 16px;
     }
 
@@ -85,6 +85,8 @@
       object-fit: cover;
       transform: scaleX(-1);
       background: black;
+      border: 2px solid #167bff;
+      box-shadow: 0 0 512px rgba(#167bff, .15);
     }
 
     .controls {
@@ -97,7 +99,7 @@
       button.control-button {
         width: 48px;
         height: 48px;
-        background: #eeffe9;
+        background: #184618;
         cursor: pointer;
         border: 2px solid limegreen;
         border-radius: 16px;
@@ -109,7 +111,7 @@
                     transform .2s cubic-bezier(.25, 0, 0, 1);
 
         &.disabled {
-          background: #ffe7e7;
+          background: #4f2727;
           border-color: orangered;
           box-shadow: 0 8px 16px rgba(red, .1);
         }

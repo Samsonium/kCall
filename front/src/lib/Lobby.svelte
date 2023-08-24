@@ -49,10 +49,10 @@
     form {
       width: 100%;
       max-width: 700px;
-      border: 1px solid #dfdfdf;
+      border: 1px solid #2f333a;
       border-radius: 16px;
       font-family: Inter, Roboto, sans-serif;
-      color: black;
+      color: white;
       display: flex;
       flex-flow: row nowrap;
       align-items: stretch;
@@ -66,7 +66,7 @@
       .fields {
         flex: 1;
         padding: 16px 24px;
-        border-right: 1px solid #dfdfdf;
+        border-right: 1px solid #2f333a;
 
         .field {
           width: 100%;
@@ -78,13 +78,15 @@
           label {
             margin-bottom: 8px;
             font: 500 16px Inter, Roboto, sans-serif;
-            color: rgba(black, .5);
+            color: rgba(white, .5);
           }
 
           input {
             border-radius: 8px;
             padding: 8px 12px;
-            border: 1px solid #cfcfcf;
+            border: 1px solid #2f333a;
+            background: #21272d;
+            color: white;
             transition: all .2s cubic-bezier(.25, 0, 0, 1);
 
             &:hover {
