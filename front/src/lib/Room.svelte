@@ -202,8 +202,6 @@
 <div class="room">
     <div class="header">
         <h3>
-            kCall
-            &horbar;
             {$roomInfo.id}
         </h3>
         <button class="exit" on:click={leaveRoom}>
