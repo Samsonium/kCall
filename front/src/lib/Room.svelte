@@ -281,23 +281,27 @@
 
         .video-grid {
           width: 100%;
-          height: 100%;
-          overflow: hidden;
+          height: calc(100vh - 64px);
+          overflow-y: auto;
+          overflow-x: hidden;
 
           .videos {
             width: 100%;
             height: 100%;
             display: flex;
             flex-flow: row wrap;
+            align-items: center;
+            align-content: flex-start;
+            justify-content: center;
           }
         }
 
         .self-video {
-          position: absolute;
+          position: fixed;
           z-index: 9;
           bottom: 16px;
-          right: 16px;
-          width: 400px;
+          left: 16px;
+          height: 200px;
           max-width: calc(100vw - 32px);
           aspect-ratio: 16 / 9;
           overflow: hidden;

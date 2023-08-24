@@ -47,8 +47,9 @@
       position: relative;
       z-index: 3;
       flex: 1;
-      min-width: 300px;
-      aspect-ratio: 16 / 9;
+      max-width: 100%;
+      min-width: 350px;
+      height: fit-content;
       border-radius: 16px;
       overflow: hidden;
       margin: 8px;
