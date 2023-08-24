@@ -7,12 +7,19 @@
     import type SocketOutMethods from '../utils/SocketOutMethods';
     import type SocketInMethods from '../utils/SocketInMethods';
     import VideoBox from './Room/VideoBox.svelte';
-    import {SignOut} from 'phosphor-svelte';
+    import {SignOut, Microphone, Webcam} from 'phosphor-svelte';
 
     let peer: Peer;
     let socket: Socket<SocketOutMethods, SocketInMethods>;
     let myVideo: HTMLVideoElement;
+    let myStream: MediaStream;
     let videoGrid: HTMLDivElement;
+
+    let isVideoEnabled = $streamInfo.video
+    $: changeTrack('video', isVideoEnabled)
+
+    let isAudioEnabled = $streamInfo.audio
+    $: changeTrack('audio', isAudioEnabled)
 
     onMount(() => {
         peer = new Peer();
@@ -43,15 +50,16 @@
                 navigator?.mediaDevices?.getUserMedia({
                     video: true,
                     audio: true
-                }).then((myStream: MediaStream) => {
-                    for (const track of myStream.getTracks()) {
+                }).then((_myStream: MediaStream) => {
+                    for (const track of _myStream.getTracks()) {
                         if (track.kind === 'audio' && !$streamInfo.audio)
                             track.enabled = false;
                         if (track.kind === 'video' && !$streamInfo.video)
                             track.enabled = false;
                     }
 
-                    myVideo.srcObject = myStream;
+                    myStream = _myStream;
+                    myVideo.srcObject = _myStream;
                     myVideo.muted = true;
                     myVideo.addEventListener('loadedmetadata', () => {
                         myVideo.play();
@@ -59,12 +67,12 @@
 
                     // On call from user in a room
                     peer.on('call', (call: MediaConnection & { meta: { uid: string, name: string } }) => {
-                        handleUserConnection(myStream).withAnswer(call);
+                        handleUserConnection(_myStream).withAnswer(call);
                     });
 
                     // On new user join
                     socket.on('userJoined', (userID, displayName) => {
-                        handleUserConnection(myStream, userID, displayName).withCall();
+                        handleUserConnection(_myStream, userID, displayName).withCall();
                     });
                     socket.on('userLeaved', (userID) => handleUserLeave(userID));
                 }).catch((err) => console.error(err));
@@ -84,6 +92,19 @@
 
     /** Typing message value */
     let message = ''
+
+    /**
+     * Change track enable status
+     * @param type
+     * @param value
+     */
+    function changeTrack(type: 'audio' | 'video', value: boolean): void {
+        if (!myStream) return;
+        for (const track of myStream.getTracks()) {
+            if (track.kind !== type) continue;
+            track.enabled = value;
+        }
+    }
 
     /**
      * Adds new media stream
@@ -196,6 +217,18 @@
         </div>
         <div class="self-video">
             <video bind:this={myVideo} muted></video>
+            <div class="controls">
+                <button class="control"
+                        class:disabled={!isAudioEnabled}
+                        on:click={() => isAudioEnabled = !isAudioEnabled}>
+                    <Microphone weight="bold" size={24} color={isAudioEnabled ? 'white' : 'orangered'} />
+                </button>
+                <button class="control"
+                        class:disabled={!isVideoEnabled}
+                        on:click={() => isVideoEnabled = !isVideoEnabled}>
+                    <Webcam weight="bold" size={24} color={isVideoEnabled ? 'white' : 'orangered'} />
+                </button>
+            </div>
         </div>
     </div>
     <div class="chat-box">
@@ -313,6 +346,44 @@
             height: 100%;
             object-fit: cover;
             transform: scaleX(-1);
+          }
+
+          .controls {
+            position: absolute;
+            z-index: 8;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            display: flex;
+            flex-flow: row nowrap;
+            align-items: center;
+            justify-content: center;
+
+            button.control {
+              width: 32px;
+              height: 32px;
+              border-radius: 16px;
+              padding: 0;
+              background: rgba(black, .5);
+              backdrop-filter: blur(8px);
+              border: none;
+              margin: 0 4px;
+              cursor: pointer;
+              transition: transform .2s cubic-bezier(.25, 0, 0, 1),
+                          background .2s cubic-bezier(.25, 0, 0, 1);
+
+              &:hover {
+                transform: scale(1.05);
+              }
+
+              &:active {
+                transform: scale(.95);
+              }
+
+              &.disabled {
+                background: rgba(mix(orangered, black, .5), .25);
+              }
+            }
           }
         }
       }
