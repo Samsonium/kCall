@@ -57,24 +57,17 @@
                         myVideo.play();
                     });
 
-                    // Setup peer call event
-                    peer.on('call', (call: MediaConnection) => {
-                        const userID = call.connectionId;
-                        call.answer(myStream);
-                        call.on('stream', (otherStream: MediaStream) => {
-                            socket.emit('whoIsIt', userID, (result: { id: string, name: string }) => {
-                                if (result.id === userID) {
-                                    handleUserConnection(userID, otherStream, result.name);
-                                }
-                            });
-                        });
+                    // On call from user in a room
+                    peer.on('call', (call: MediaConnection & { meta: { uid: string, name: string } }) => {
+                        handleUserConnection(myStream).withAnswer(call);
                     });
 
-                    socket.on('userJoined', (userID, displayName) => handleUserConnection(userID, myStream, displayName));
+                    // On new user join
+                    socket.on('userJoined', (userID, displayName) => {
+                        handleUserConnection(myStream, userID, displayName).withCall();
+                    });
                     socket.on('userLeaved', (userID) => handleUserLeave(userID));
                 }).catch((err) => console.error(err));
-
-                socket.on('userJoined', (userID, displayName) => handleUserConnection(userID, new MediaStream(), displayName));
                 socket.emit('joinRoom', $roomInfo.id, id, $roomInfo.user);
             });
             socket.on('connect_error', (err) => {
@@ -106,37 +99,57 @@
 
     /**
      * New user in room event handler
-     * @param userID
      * @param stream
+     * @param userID
      * @param name Display name of the user
      */
-    function handleUserConnection(userID: string, stream: MediaStream, name: string) {
-        const call = peer.call(userID, stream);
-        const box = document.createElement('div');
-        box.style.display = 'contents';
+    function handleUserConnection(stream: MediaStream, userID?: string, name?: string) {
+        const afterCall = (call: MediaConnection & { metadata: { uid: string, name: string }}) => {
+            const uid = userID ?? call.metadata.uid;
+            const uname = name ?? call.metadata.name;
 
-        const video = document.createElement('video');
-        const component = new VideoBox({
-            target: box,
-            props: {
-                name,
-                video
-            }
-        });
+            const box = document.createElement('div');
+            box.style.display = 'contents';
 
-        call.on('stream', (userStream: MediaStream) => {
-            addVideoStream(box, video, userStream);
-            $roomInfo.members[userID] = call;
-        });
-        socket.on('userLeaved', (leavedUserID) => {
-            if (userID === leavedUserID) {
-                if (video || component) {
-                    video?.remove();
-                    component?.$destroy();
-                    delete $roomInfo.members[userID];
+            const video = document.createElement('video');
+            const component = new VideoBox({
+                target: box,
+                props: {
+                    name: uname,
+                    video
                 }
+            });
+
+            call.on('stream', (userStream: MediaStream) => {
+                addVideoStream(box, video, userStream);
+                $roomInfo.members[uid] = call;
+            });
+            socket.on('userLeaved', (leavedUserID) => {
+                if (uid === leavedUserID) {
+                    if (video || component) {
+                        video?.remove();
+                        component?.$destroy();
+                        delete $roomInfo.members[uid];
+                    }
+                }
+            });
+        }
+
+        return {
+            withCall: () => {
+                const call = peer.call(userID, stream, {
+                    metadata: {
+                        uid: userID,
+                        name
+                    }
+                });
+                afterCall(call);
+            },
+            withAnswer: (call: MediaConnection) => {
+                call.answer(stream);
+                afterCall(call);
             }
-        });
+        }
     }
 
     /**
