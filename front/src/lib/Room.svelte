@@ -114,13 +114,13 @@
         const protocol = location.protocol;
         const host = location.host;
         const room = $roomInfo.id;
-        navigator.clipboard.writeText(`${protocol}://${host}/?room=${room}`).then(() => {
+        navigator.clipboard.writeText(`${protocol}//${host}/?room=${room}`).then(() => {
             Notification.send(Notification.Type.Success, 'Готово!', 'Ссылка успешно скопирована');
         }).catch(() => {
             Notification.send(Notification.Type.Error, 'Ошибка!', 'Не удалось скопировать ссылку');
         });
     }
-
+1
     /**
      * Adds new media stream
      * @param container
