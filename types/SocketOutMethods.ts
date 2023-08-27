@@ -1,4 +1,5 @@
 import SocketEventsMap from './SocketEventsMap';
+import RoomData from './RoomData';
 
 /**
  * Socket events from server
@@ -8,13 +9,13 @@ export default interface SocketOutMethods extends SocketEventsMap {
      * Accept user room join request
      * @param chatHistory
      */
-    joinAccepted: (chatHistory: {name: string, message: string}[]) => void;
+    joinAccepted: (roomData: RoomData) => void;
 
     /**
      * User joins the room
      * @param userID
      */
-    userJoined: (userID: string, displayName: string) => void;
+    userJoined: (data: RoomData['members'][number]) => void;
 
     /**
      * User leaves the room
@@ -23,9 +24,15 @@ export default interface SocketOutMethods extends SocketEventsMap {
     userLeaved: (userID: string) => void;
 
     /**
-     * User sends message
+     * User sends typingMessage
      * @param userID
-     * @param message
+     * @param typingMessage
      */
     newMessage: (userID: string, message: string) => void;
+
+    /**
+     * Room data event
+     * @param roomData
+     */
+    roomDataUpdate: (roomData: RoomData) => void;
 }

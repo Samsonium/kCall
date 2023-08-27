@@ -7,8 +7,8 @@
     import {SignOut, Microphone, Webcam, Share} from 'phosphor-svelte';
     import Notification from '../utils/Notification';
     import VideoBox from './Room/VideoBox.svelte';
-    import type SocketOutMethods from '../utils/SocketOutMethods';
-    import type SocketInMethods from '../utils/SocketInMethods';
+    import type SocketOutMethods from '../../../types/SocketOutMethods';
+    import type SocketInMethods from '../../../types/SocketInMethods';
 
     let peer: Peer;
     let socket: Socket<SocketOutMethods, SocketInMethods>;

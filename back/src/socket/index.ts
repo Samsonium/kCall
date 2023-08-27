@@ -1,16 +1,17 @@
-import SocketOutMethods from './SocketOutMethods';
-import SocketInMethods from './SocketInMethods';
-import SocketData from './SocketData';
 import {Server as SocketIOServer, ServerOptions} from 'socket.io';
 import {Server} from 'http';
 import Logger from '../logger';
+
+import type RoomData from '../../../types/RoomData';
+import type SocketInMethods from '../../../types/SocketInMethods';
+import type SocketOutMethods from '../../../types/SocketOutMethods';
 
 /**
  * Socket server implementation for kCall backend service
  */
 export default class KCallSocket {
-    private readonly chats: Map<string, { name: string, message: string }[]>;
-    private readonly _io: SocketIOServer<SocketInMethods, SocketOutMethods, {}, SocketData>;
+    private readonly rooms: Map<string, RoomData>;
+    private readonly _io: SocketIOServer<SocketInMethods, SocketOutMethods>;
     public get io() { return this._io }
 
     constructor(server: Server, options?: Partial<ServerOptions>) {
