@@ -158,7 +158,7 @@
           height: 32px;
 
           img {
-            object-position: top;
+            object-position: center;
           }
         }
       }
