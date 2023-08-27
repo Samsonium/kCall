@@ -80,6 +80,8 @@ export default class KCallSocket {
                 socket.on('disconnect', () => {
                     this.io.to(roomID).emit('userLeaved', data.userID);
                     socket.leave(roomID);
+                    const members = this.rooms.get(roomID).members;
+                    members.splice(members.findIndex(m => m.userID === data.userID), 1)
 
                     Logger.instance.info(`[${data.userID}]: DISCONNECTED`)
                 });
