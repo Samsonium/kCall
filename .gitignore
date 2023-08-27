@@ -4,6 +4,7 @@
 !/.github
 !/front
 !/back
+!/types
 
 # Files
 !/.gitignore
