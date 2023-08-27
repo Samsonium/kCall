@@ -341,4 +341,11 @@ export default class RoomCall {
             stream: this.selfStream
         }
     }
+
+    public get members() {
+        return {
+            streams: this.membersStreams,
+            room: this.room
+        }
+    }
 }
