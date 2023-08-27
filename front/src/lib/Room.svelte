@@ -23,16 +23,19 @@
     $: changeTrack('audio', isAudioEnabled)
 
     onMount(() => {
+        const socketPort = import.meta.env.DEV ? 7000 : parseInt(location.port);
+
         peer = new Peer(undefined, {
             host: location.hostname,
-            port: import.meta.env.DEV ? 7000 : parseInt(location.port),
+            debug: 2,
+            port: socketPort,
             path: '/peer'
         });
 
         peer.on('open', id => {
             const connectionPath = import.meta.env.DEV
-                ? `${location.hostname}:7000`
-                : `${location.host}`;
+                ? `http://localhost:7000`
+                : `https://${location.host}`;
 
             socket = io(connectionPath, {
                 path: '/socket'
@@ -89,6 +92,12 @@
                 socket.close();
             });
         });
+
+        return () => {
+            socket.close();
+            peer.socket.close();
+            console.log('Closed connection');
+        };
     });
 
     /** Chat */
