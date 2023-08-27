@@ -17,7 +17,8 @@
     "ejs": "^3.1.9",
     "socket.io": "^4.7.2",
     "uuid": "^9.0.0",
-    "peer": "^1.0.0"
+    "peer": "^1.0.0",
+    "cors": "^2.8.5"
   },
   "devDependencies": {
     "peerjs": "^1.4.7",

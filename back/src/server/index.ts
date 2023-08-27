@@ -1,6 +1,7 @@
 import {ExpressPeerServer} from 'peer';
-import {Server} from 'http';
+import {createServer, Server} from 'http';
 import express from 'express';
+import cors from 'cors';
 
 /**
  * ExpressJS server
@@ -11,10 +12,13 @@ export default class KCallServer {
 
     constructor() {
         const app = express();
-        this._server = new Server(app);
+        this._server = createServer(app);
         app.use('/peer', ExpressPeerServer(this._server, {
             generateClientId: this.generateUserID,
             proxied: true
+        }));
+        app.use(cors({
+            origin: '*'
         }));
         app.use(express.static('public'));
     }
