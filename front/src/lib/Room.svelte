@@ -23,7 +23,11 @@
     $: changeTrack('audio', isAudioEnabled)
 
     onMount(() => {
-        peer = new Peer();
+        peer = new Peer(undefined, {
+            host: location.hostname,
+            port: import.meta.env.DEV ? 7000 : parseInt(location.port),
+            path: '/peer'
+        });
 
         peer.on('open', id => {
             const connectionPath = import.meta.env.DEV
