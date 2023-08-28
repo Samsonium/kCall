@@ -1,47 +1,40 @@
 <script lang="ts">
+    import {room} from '../../utils/store';
     import VideoBox from './VideoBox.svelte';
     import type MemberStreams from '../../utils/MemberStreams';
-    import type RoomData from '../../../../types/RoomData';
     import type {Writable} from 'svelte/store';
-    import {onMount} from 'svelte';
 
     export let memberStreams: Writable<MemberStreams>;
-    export let roomData: Writable<RoomData>;
 
     let streams: {
         stream: MediaStream;
+        streamSettings: {
+            isAudioEnabled: boolean;
+            isVideoEnabled: boolean;
+        };
         name: string;
     }[] = [];
 
-    $: if ($roomData?.members?.length) {
-        console.log(roomData);
+    $: if ($room?.members?.length) {
+        console.log($room);
         if ($memberStreams) {
             streams = [];
             for (const userID in $memberStreams) {
-                const member = $roomData.members.find((member) => member.userID === userID);
+                const member = $room.members.find((member) => member.userID === userID);
                 streams.push({
                     stream: $memberStreams[userID].stream,
-                    name: member?.displayName ?? 'Неизвестный'
+                    name: member?.displayName ?? 'Неизвестный',
+                    streamSettings: member?.stream ?? {
+                        isAudioEnabled: false,
+                        isVideoEnabled: false
+                    }
                 });
             }
         }
     }
-
-    onMount(() => {
-        roomData?.subscribe((data) => {
-            streams = [];
-            for (const member of data.members) {
-                const userID = member.userID;
-                streams.push({
-                    stream: $memberStreams[userID].stream,
-                    name: member.displayName
-                });
-            }
-        })
-    })
 </script>
 
-{#if $memberStreams && $roomData}
+{#if $memberStreams && $room}
     <div class="video-grid">
         <div class="videos">
             {#each streams as data}

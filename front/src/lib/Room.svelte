@@ -14,7 +14,7 @@
     /**
      * Room call class
      */
-    let roomCall: RoomCall;
+    const roomCall = new RoomCall();
 
     /**
      * Local stream
@@ -25,21 +25,6 @@
      * Video element for local stream
      */
     let selfVideo: HTMLVideoElement;
-
-    /**
-     * Member streams
-     */
-    let memberStreams: Writable<MemberStreams>;
-    $: if ($selfStream && selfVideo) {
-        selfVideo.pause();
-        selfVideo.srcObject = $selfStream;
-        selfVideo.addEventListener('loadedmetadata', () => selfVideo.play());
-    }
-
-    /**
-     * Room data
-     */
-    let room: Writable<RoomData>;
 
     /**
      * Video track enable state
@@ -53,11 +38,14 @@
     let isAudioEnabled = $streamInfo.audio
     $: changeTrack('audio', isAudioEnabled)
 
+    $: if ($selfStream && selfVideo) {
+        selfVideo.pause();
+        selfVideo.srcObject = $selfStream;
+        selfVideo.addEventListener('loadedmetadata', () => selfVideo.play());
+    }
+
     onMount(async () => {
-        roomCall = new RoomCall();
-        selfStream = roomCall.self.stream;
-        memberStreams = roomCall.members.streams;
-        room = roomCall.members.room;
+        selfStream = roomCall.selfStream;
 
         await roomCall.startCall();
     });
@@ -129,7 +117,7 @@
         </div>
     </div>
     <div class="video-box">
-        <VideoGrid roomData={room} {memberStreams} />
+        <VideoGrid memberStreams={roomCall.membersStreams} />
         <div class="self-video">
             <video bind:this={selfVideo} muted></video>
             <div class="controls">
@@ -407,15 +395,6 @@
 
       .chat-box {
         display: none !important;
-      }
-
-      .video-box {
-        grid-column-start: 1 !important;
-        grid-column-end: col2-end !important;
-
-        .videos {
-          height: calc(100% - ((100vw - 32px) / 16 * 9));
-        }
       }
     }
 </style>

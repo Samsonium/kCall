@@ -1,6 +1,6 @@
 import Notification from './Notification';
 import {get, writable} from 'svelte/store';
-import {roomInfo, streamInfo} from './store';
+import {roomInfo, streamInfo, room} from './store';
 import {Peer, type MediaConnection} from 'peerjs';
 import {io, type Socket} from 'socket.io-client';
 import type {Writable} from 'svelte/store';
@@ -36,15 +36,14 @@ export default class RoomCall {
 
     // -------- [ Room data ]
 
-    private readonly membersStreams: Writable<MemberStreams>;
+    public readonly membersStreams: Writable<MemberStreams>;
     private socket: Socket<SocketOutMethods, SocketInMethods>;
-    private room: Writable<RoomData>;
     private peer: Peer;
 
     // -------- [ Self stream ]
 
+    public readonly selfStream: Writable<MediaStream>;
     private readonly selfStreamData: Writable<RoomData['members'][number]['stream']>;
-    private readonly selfStream: Writable<MediaStream>;
 
     public constructor() {
         this.socketPort = import.meta.env.DEV ? 7000 : parseInt(location.port);
@@ -61,12 +60,6 @@ export default class RoomCall {
 
         // Create member streams store
         this.membersStreams = writable({});
-
-        // Create room store
-        this.room = writable({
-            chat: [],
-            members: []
-        });
 
         // Create self stream store
         this.selfStream = writable(null);
@@ -95,7 +88,7 @@ export default class RoomCall {
     public endCall() {
         this.socket.disconnect();
         this.peer.destroy();
-        this.room.set(null);
+        room.set(null);
         this.membersStreams.set(null);
     }
 
@@ -272,7 +265,7 @@ export default class RoomCall {
      * @param value Current value
      */
     public changeTrack(type: 'audio' | 'video', value: boolean): void {
-        if (!this.selfStream) return;
+        if (!get(this.selfStream)) return;
 
         let track: MediaStreamTrack;
         switch (type) {
@@ -285,6 +278,8 @@ export default class RoomCall {
                 track.enabled = value;
                 break;
         }
+
+        this.socket.emit('changeStreamParams', type, value);
     }
 
     /**
@@ -294,7 +289,7 @@ export default class RoomCall {
 
         // On room join approved
         this.socket.on('joinAccepted', (roomData) => {
-            this.room = writable(roomData);
+            room.set(roomData);
         });
 
         // On new typingMessage in room
@@ -307,7 +302,8 @@ export default class RoomCall {
 
         // On room data update
         this.socket.on('roomDataUpdate', (roomData) => {
-            this.room.set(roomData);
+            console.log('roomDataUpdate:', roomData);
+            room.set(roomData);
         });
 
         // On new user connected
@@ -327,7 +323,7 @@ export default class RoomCall {
                 return _members;
             });
 
-            const members = get(this.room).members;
+            const members = get(room).members;
             const user = members.find((user) => user.userID === userID);
 
             Notification.send(
@@ -336,20 +332,5 @@ export default class RoomCall {
                 `${user.displayName} отключился`
             );
         });
-    }
-
-    // ---------------- [ Getters ]
-
-    public get self() {
-        return {
-            stream: this.selfStream
-        }
-    }
-
-    public get members() {
-        return {
-            streams: this.membersStreams,
-            room: this.room
-        }
     }
 }
