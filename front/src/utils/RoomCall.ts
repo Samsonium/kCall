@@ -101,12 +101,12 @@ export default class RoomCall {
      */
     public createPeer(): Promise<void> {
         return new Promise<void>(resolve => {
-            this.peer = new Peer(undefined, {
+            this.peer = new Peer(/*undefined, {
                 host: location.hostname,
                 debug: 2,
                 port: this.socketPort,
                 path: '/peer'
-            });
+            }*/);
 
             // On peer connection open
             this.peer.on('open', async (id) => {
