@@ -1,7 +1,7 @@
 import {describe, it, expect, beforeAll, afterAll} from 'vitest';
 import {default as io, Socket} from 'socket.io-client';
-import SocketInMethods from '../src/socket/SocketInMethods';
-import SocketOutMethods from '../src/socket/SocketOutMethods';
+import SocketInMethods from '../../types/SocketInMethods';
+import SocketOutMethods from '../../types/SocketOutMethods';
 import KCallSocket from '../src/socket';
 import KCallServer from '../src/server';
 
@@ -31,6 +31,10 @@ describe('Room join and leave', () => {
             expect(true).toBe(true);
             done();
         });
-        socket.emit('joinRoom', '123', '321', 'test');
+        socket.emit('joinRoom', '123', {
+            userID: '321',
+            peerID: '321',
+            displayName: 'test'
+        });
     }));
 });

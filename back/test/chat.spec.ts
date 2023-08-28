@@ -1,8 +1,8 @@
 import {v4} from 'uuid';
 import {describe, it, expect, beforeAll, afterAll} from 'vitest';
 import {default as io, Socket} from 'socket.io-client';
-import SocketInMethods from '../src/socket/SocketInMethods';
-import SocketOutMethods from '../src/socket/SocketOutMethods';
+import SocketInMethods from '../../types/SocketInMethods';
+import SocketOutMethods from '../../types/SocketOutMethods';
 import KCallSocket from '../src/socket';
 import KCallServer from '../src/server';
 
@@ -42,7 +42,11 @@ describe('Room chat', () => {
         socket1.once('joinAccepted', () => {
             done();
         });
-        socket1.emit('joinRoom', randomRoomId, sock1ID, 'Socket 1');
+        socket1.emit('joinRoom', randomRoomId, {
+            userID: sock1ID,
+            peerID: sock1ID,
+            displayName: 'Socket 1'
+        });
     }));
 
     it('Send message', () => new Promise<void>(done => {
@@ -56,11 +60,15 @@ describe('Room chat', () => {
 
     it('Add second connection', () => new Promise<void>(done => {
         socket2.once('joinAccepted', (chatHistory) => {
-            expect(chatHistory).toBeInstanceOf(Array);
-            expect(chatHistory[0].message).toBe('Hello!');
+            expect(chatHistory.chat).toBeInstanceOf(Array);
+            expect(chatHistory.chat[0].message).toBe('Hello!');
             done();
         });
-        socket2.emit('joinRoom', randomRoomId, sock2ID, 'Socket 2');
+        socket2.emit('joinRoom', randomRoomId, {
+            userID: sock2ID,
+            peerID: sock2ID,
+            displayName: 'Socket 2'
+        });
     }));
 
     it('Send message from second and check on first', () => new Promise<void>(done => {
