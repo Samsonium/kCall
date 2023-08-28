@@ -2,9 +2,11 @@
 
 # Dirs
 !/.github
-!/front
-!/back
-!/types
+!/api-server
+!/client
+!/peer-server
+!/static-server
+!/tools
 
 # Files
 !/.gitignore

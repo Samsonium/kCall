@@ -1,18 +1,12 @@
 {
   "name": "kcall",
   "private": true,
-  "scripts": {
-    "build:front": "yarn workspace front build",
-    "build:back": "yarn workspace back build",
-    "build:all": "yarn build:back && yarn build:front",
-    "build:end": "shx cp -r ./node_modules/ ./build/node_modules/",
-    "build": "yarn build:all && yarn build:end"
-  },
-  "devDependencies": {
-    "shx": "^0.3.4"
-  },
+  "scripts": {},
   "workspaces": [
-    "./front",
-    "./back"
+    "client",
+    "api-server",
+    "peer-server",
+    "static-server",
+    "tools"
   ]
 }
