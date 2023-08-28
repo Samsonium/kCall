@@ -1,6 +1,6 @@
 {
   "name": "back",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Backend service for kCall",
   "main": "index.js",
   "repository": "https://github.com/Samsonium/kCall",
