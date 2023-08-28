@@ -1,0 +1,9 @@
+{
+  "name": "tools",
+  "version": "1.0.0",
+  "description": "Common types and utilities for all packages",
+  "main": "index.js",
+  "author": "samsonium",
+  "license": "MIT",
+  "private": true
+}
