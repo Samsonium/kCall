@@ -101,12 +101,20 @@ export default class RoomCall {
      */
     public createPeer(): Promise<void> {
         return new Promise<void>(resolve => {
-            this.peer = new Peer(/*undefined, {
-                host: location.hostname,
-                debug: 2,
+            const peerConfig: Peer['options'] = import.meta.env.DEV ? {
+                debug: 3,
                 port: this.socketPort,
-                path: '/peer'
-            }*/);
+                path: '/peer',
+                host: '/'
+            } : {
+                debug: 3,
+                path: '/peer',
+                host: '/',
+                secure: true,
+                pingInterval: 6000
+            };
+
+            this.peer = new Peer(undefined, peerConfig);
 
             // On peer connection open
             this.peer.on('open', async (id) => {
