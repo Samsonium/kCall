@@ -47,6 +47,8 @@ export default class RoomCall {
 
     public constructor() {
         this.socketPort = import.meta.env.DEV ? 7000 : parseInt(location.port);
+        if (isNaN(this.socketPort))
+            this.socketPort = 80;
 
         // Set initial stream tracks info
         const streamData = get(streamInfo)
