@@ -23,7 +23,53 @@
      */
     let isShowingSettings = false;
 
+    /**
+     * Random color for video box
+     */
+    const color = [
+        '#8783D1',
+        '#34623F',
+        '#B39C4D',
+        '#FF312E',
+        '#540D6E',
+        '#0EAD69',
+        '#3BCEAC',
+        '#EE4266',
+        '#E77728',
+        '#EDB230',
+        '#587792',
+        '#C6C013',
+        '#008148',
+        '#034732',
+        '#5C5D67',
+        '#A68BA5',
+    ][Math.floor(Math.random() * 16)];
+
+    let jsNode: ScriptProcessorNode;
+
+    let isTalking = false;
+
     onMount(() => {
+        const audioCtx = new AudioContext();
+        const analyzer = audioCtx.createAnalyser();
+        const mic = audioCtx.createMediaStreamSource(stream);
+        jsNode = audioCtx.createScriptProcessor(2048, 1, 1);
+        analyzer.smoothingTimeConstant = .8;
+        analyzer.fftSize = 1024;
+        mic.connect(analyzer);
+        analyzer.connect(jsNode);
+        jsNode.connect(audioCtx.destination);
+        jsNode.onaudioprocess = () => {
+            const array = new Uint8Array(analyzer.frequencyBinCount);
+            analyzer.getByteFrequencyData(array);
+            let values = 0;
+
+            for (let i = 0; i < array.length; i++)
+                values += array[i];
+            const avg = values / array.length;
+            isTalking = Math.round(avg) > 15;
+        };
+
         video.srcObject = stream;
         video.addEventListener('loadedmetadata', () => {
             video.play();
@@ -33,6 +79,7 @@
 
     onDestroy(() => {
         video.remove();
+        jsNode.disconnect();
     });
 </script>
 
