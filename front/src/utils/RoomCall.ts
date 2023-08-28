@@ -312,7 +312,7 @@ export default class RoomCall {
 
         // On new user connected
         this.socket.on('userJoined', (meta) => {
-            this.handleConnection(meta);
+            this.handleConnection(meta).call();
             Notification.send(
                 Notification.Type.Success,
                 '',
