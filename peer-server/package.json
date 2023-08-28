@@ -1,0 +1,9 @@
+{
+  "name": "peer-server",
+  "version": "1.0.0",
+  "description": "PeerJS server for WebRTC communications",
+  "main": "index.js",
+  "author": "samsonium",
+  "license": "MIT",
+  "private": true
+}
