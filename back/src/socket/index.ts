@@ -41,12 +41,12 @@ export default class KCallSocket {
                     members: []
                 });
 
+                // Return accept typingMessage to room user
+                socket.emit('joinAccepted', this.rooms.get(roomID));
+
                 // Update room info and emit metadata to room members
                 this.rooms.get(roomID).members.push(data);
                 socket.to(roomID).emit('roomDataUpdate', this.rooms.get(roomID));
-
-                // Return accept typingMessage to room user
-                socket.emit('joinAccepted', this.rooms.get(roomID));
 
                 // Send typingMessage
                 socket.on('sendMessage', (message) => {
