@@ -1,0 +1,9 @@
+{
+  "name": "static-server",
+  "version": "1.0.0",
+  "description": "Client bundle serving server",
+  "main": "index.js",
+  "author": "samsonium",
+  "license": "MIT",
+  "private": true
+}
