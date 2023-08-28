@@ -1,32 +1,36 @@
 <script lang="ts">
-    import {onMount} from 'svelte';
+    import {onDestroy, onMount} from 'svelte';
     import {slide} from 'svelte/transition';
     import {GearSix, X} from 'phosphor-svelte';
 
-    /**
-     * Video element
-     */
-    export let video: HTMLVideoElement;
-
-    /**
-     * Username
-     */
+    export let stream: MediaStream;
     export let name: string;
 
     /**
-     * Box for video element
+     * Video element for stream
      */
-    let videoBox: HTMLDivElement;
+    let video: HTMLVideoElement;
 
     /**
      * Whether to show popup with settings
      */
     let isShowingSettings = false;
 
-    onMount(() => videoBox.append(video));
+    onMount(() => {
+        video.srcObject = stream;
+        video.addEventListener('loadedmetadata', () => {
+            video.play();
+            video.muted = false;
+        });
+    });
+
+    onDestroy(() => {
+        video.remove();
+    });
 </script>
 
-<div bind:this={videoBox} class="video-box">
+<div class="video-box">
+    <video bind:this={video} muted></video>
     <div class="controls">
         <p>{name}</p>
         <button class="settings" on:click={() => isShowingSettings = !isShowingSettings}>
