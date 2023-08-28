@@ -1,111 +1,77 @@
 <script lang="ts">
     import {roomInfo, streamInfo} from '../utils/store';
-    import {onMount} from 'svelte';
+    import {onDestroy, onMount} from 'svelte';
     import {slide} from 'svelte/transition';
-    import {io, Socket} from 'socket.io-client';
-    import {type MediaConnection, Peer} from 'peerjs';
     import {SignOut, Microphone, Webcam, Share} from 'phosphor-svelte';
     import Notification from '../utils/Notification';
-    import VideoBox from './Room/VideoBox.svelte';
-    import type SocketOutMethods from '../../../types/SocketOutMethods';
-    import type SocketInMethods from '../../../types/SocketInMethods';
+    import RoomCall from '../utils/RoomCall';
 
-    let peer: Peer;
-    let socket: Socket<SocketOutMethods, SocketInMethods>;
-    let myVideo: HTMLVideoElement;
-    let myStream: MediaStream;
-    let videoGrid: HTMLDivElement;
+    import type {Writable} from 'svelte/store';
+    import type MemberStreams from '../utils/MemberStreams';
+    import type RoomData from '../../../types/RoomData';
+    import VideoGrid from './Room/VideoGrid.svelte';
 
+    /**
+     * Room call class
+     */
+    let roomCall: RoomCall;
+
+    /**
+     * Local stream
+     */
+    let selfStream: Writable<MediaStream>;
+
+    /**
+     * Video element for local stream
+     */
+    let selfVideo: HTMLVideoElement;
+
+    /**
+     * Member streams
+     */
+    let memberStreams: Writable<MemberStreams>;
+    $: if ($selfStream && selfVideo) {
+        selfVideo.pause();
+        selfVideo.srcObject = $selfStream;
+        selfVideo.addEventListener('loadedmetadata', () => selfVideo.play());
+    }
+
+    /**
+     * Room data
+     */
+    let room: Writable<RoomData>;
+
+    /**
+     * Video track enable state
+     */
     let isVideoEnabled = $streamInfo.video
     $: changeTrack('video', isVideoEnabled)
 
+    /**
+     * Audio track enable state
+     */
     let isAudioEnabled = $streamInfo.audio
     $: changeTrack('audio', isAudioEnabled)
 
-    onMount(() => {
-        const socketPort = import.meta.env.DEV ? 7000 : parseInt(location.port);
+    onMount(async () => {
+        roomCall = new RoomCall();
+        selfStream = roomCall.self.stream;
+        memberStreams = roomCall.members.streams;
+        room = roomCall.members.room;
 
-        peer = new Peer(undefined, {
-            host: location.hostname,
-            debug: 2,
-            port: socketPort,
-            path: '/peer'
-        });
-
-        peer.on('open', id => {
-            const connectionPath = import.meta.env.DEV
-                ? `http://localhost:7000`
-                : `https://${location.host}`;
-
-            socket = io(connectionPath, {
-                path: '/socket'
-            });
-
-            socket.on('connect', () => {
-                socket.on('joinAccepted', (chatHistory) => {
-                    $roomInfo.ready = true;
-                    $roomInfo.chat = chatHistory;
-                    console.log(chatHistory);
-
-                    socket.on('newMessage', (userID, message) => {
-                        $roomInfo.chat = [...$roomInfo.chat, {
-                            name: userID,
-                            message
-                        }]
-                    });
-                });
-
-                navigator?.mediaDevices?.getUserMedia({
-                    video: true,
-                    audio: true
-                }).then((_myStream: MediaStream) => {
-                    for (const track of _myStream.getTracks()) {
-                        if (track.kind === 'audio' && !$streamInfo.audio)
-                            track.enabled = false;
-                        if (track.kind === 'video' && !$streamInfo.video)
-                            track.enabled = false;
-                    }
-
-                    myStream = _myStream;
-                    myVideo.srcObject = _myStream;
-                    myVideo.muted = true;
-                    myVideo.addEventListener('loadedmetadata', () => {
-                        myVideo.play();
-                    });
-
-                    // On call from user in a room
-                    peer.on('call', (call: MediaConnection & { meta: { uid: string, name: string } }) => {
-                        handleUserConnection(_myStream).withAnswer(call);
-                    });
-
-                    // On new user join
-                    socket.on('userJoined', (userID, displayName) => {
-                        handleUserConnection(_myStream, userID, displayName).withCall();
-                    });
-                    socket.on('userLeaved', (userID) => handleUserLeave(userID));
-                }).catch((err) => console.error(err));
-                socket.emit('joinRoom', $roomInfo.id, id, $roomInfo.user);
-            });
-            socket.on('connect_error', (err) => {
-                console.log('Cannot connect:', err);
-                Notification.send(Notification.Type.Error, 'Ошибка!', 'Не удалось подключиться')
-                socket.close();
-            });
-        });
-
-        return () => {
-            socket.close();
-            peer.socket.close();
-            console.log('Closed connection');
-        };
+        await roomCall.startCall();
     });
+
+    onDestroy(() => {
+        roomCall.endCall();
+    })
 
     /** Chat */
     let chat = [];
     $: if ($roomInfo.chat) chat = $roomInfo.chat;
 
-    /** Typing message value */
-    let message = ''
+    /** Typing typingMessage value */
+    let typingMessage = ''
 
     /**
      * Change track enable status
@@ -113,11 +79,7 @@
      * @param value
      */
     function changeTrack(type: 'audio' | 'video', value: boolean): void {
-        if (!myStream) return;
-        for (const track of myStream.getTracks()) {
-            if (track.kind !== type) continue;
-            track.enabled = value;
-        }
+        if (roomCall) roomCall.changeTrack(type, value);
     }
 
     /**
@@ -133,82 +95,6 @@
             Notification.send(Notification.Type.Error, 'Ошибка!', 'Не удалось скопировать ссылку');
         });
     }
-1
-    /**
-     * Adds new media stream
-     * @param container
-     * @param video
-     * @param stream
-     */
-    function addVideoStream(container: HTMLDivElement, video: HTMLVideoElement, stream: MediaStream) {
-        video.srcObject = stream;
-        video.addEventListener('loadedmetadata', () => video.play());
-        videoGrid.append(container);
-    }
-
-    /**
-     * New user in room event handler
-     * @param stream
-     * @param userID
-     * @param name Display name of the user
-     */
-    function handleUserConnection(stream: MediaStream, userID?: string, name?: string) {
-        const afterCall = (call: MediaConnection & { metadata: { uid: string, name: string }}) => {
-            const uid = userID ?? call.metadata.uid;
-            const uname = name ?? call.metadata.name;
-
-            const box = document.createElement('div');
-            box.style.display = 'contents';
-
-            const video = document.createElement('video');
-            const component = new VideoBox({
-                target: box,
-                props: {
-                    name: uname,
-                    video
-                }
-            });
-
-            call.on('stream', (userStream: MediaStream) => {
-                addVideoStream(box, video, userStream);
-                $roomInfo.members[uid] = call;
-            });
-            socket.on('userLeaved', (leavedUserID) => {
-                if (uid === leavedUserID) {
-                    if (video || component) {
-                        video?.remove();
-                        component?.$destroy();
-                        delete $roomInfo.members[uid];
-                    }
-                }
-            });
-        }
-
-        return {
-            withCall: () => {
-                const call = peer.call(userID, stream, {
-                    metadata: {
-                        uid: userID,
-                        name
-                    }
-                });
-                afterCall(call);
-            },
-            withAnswer: (call: MediaConnection) => {
-                call.answer(stream);
-                afterCall(call);
-            }
-        }
-    }
-
-    /**
-     * User leave event handler
-     */
-    function handleUserLeave(userID: string) {
-        delete $roomInfo.members[userID];
-        $roomInfo.members = $roomInfo.members;
-        document.querySelector<HTMLVideoElement>(`[id="${userID}"]`)?.remove();
-    }
 
     /**
      * Leave the room
@@ -219,11 +105,11 @@
     }
 
     /**
-     * Send message to the room
+     * Send typingMessage to the room
      */
     function sendMessage() {
-        socket.emit('sendMessage', message);
-        message = '';
+        roomCall.sendMessage(typingMessage);
+        typingMessage = '';
     }
 </script>
 
@@ -243,11 +129,9 @@
         </div>
     </div>
     <div class="video-box">
-        <div class="video-grid">
-            <div class="videos" bind:this={videoGrid}></div>
-        </div>
+        <VideoGrid roomData={room} {memberStreams} />
         <div class="self-video">
-            <video bind:this={myVideo} muted></video>
+            <video bind:this={selfVideo} muted></video>
             <div class="controls">
                 <button class="control"
                         class:disabled={!isAudioEnabled}
@@ -276,7 +160,7 @@
             </div>
         </div>
         <form class="field" on:submit|preventDefault={sendMessage}>
-            <input type="text" minlength="1" maxlength="256" placeholder="Сообщение" bind:value={message}>
+            <input type="text" minlength="1" maxlength="256" placeholder="Сообщение" bind:value={typingMessage}>
             <button type="submit" class="send">Отправить</button>
         </form>
     </div>
@@ -355,23 +239,6 @@
         z-index: 10;
         grid-column: 1;
         grid-row: 2;
-
-        .video-grid {
-          width: 100%;
-          height: calc(100vh - 64px);
-          overflow-y: auto;
-          overflow-x: hidden;
-
-          .videos {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-flow: row wrap;
-            align-items: center;
-            align-content: flex-start;
-            justify-content: center;
-          }
-        }
 
         .self-video {
           position: fixed;
