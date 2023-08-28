@@ -1,6 +1,7 @@
 import {ExpressPeerServer} from 'peer';
-import {Server} from 'http';
+import {createServer, Server} from 'http';
 import express from 'express';
+import cors from 'cors';
 
 /**
  * ExpressJS server
@@ -11,8 +12,26 @@ export default class KCallServer {
 
     constructor() {
         const app = express();
-        this._server = new Server(app);
-        app.use('/peer', ExpressPeerServer(this._server));
+        this._server = createServer(app);
+        app.use('/peer', ExpressPeerServer(this._server, {
+            generateClientId: this.generateUserID,
+            proxied: true
+        }));
+        app.use(cors({
+            origin: '*'
+        }));
         app.use(express.static('public'));
+    }
+
+    /**
+     * Generate user id for peer connection
+     * @returns {string} unique user identifier
+     */
+    private generateUserID(): string {
+        const mask: string = 'kusr-xxxx-xxxx-xxxx';
+        const dict: string = 'abcdefghijklmnopqrstuvwxyz0123456789';
+        return mask.replaceAll(/x/g, () => {
+            return dict.charAt(Math.floor(Math.random() * dict.length));
+        });
     }
 }

@@ -16,7 +16,9 @@
         {/if}
     </div>
     <div class="text">
-        <h1>{header}</h1>
+        {#if header}
+            <h1>{header}</h1>
+        {/if}
         {#if message}
             <p>{message}</p>
         {/if}
@@ -42,6 +44,10 @@
         align-items: flex-start;
         padding: 0 16px;
 
+        & > *:nth-child(2) {
+          margin: 8px 0 0;
+        }
+
         h1 {
           font: 700 18px Inter, Roboto, sans-serif;
           color: white;
@@ -53,7 +59,6 @@
           font: 400 14px Inter, Roboto, sans-serif;
           color: rgba(white, .75);
           padding: 0;
-          margin: 8px 0 0;
         }
       }
 

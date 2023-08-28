@@ -1,16 +1,17 @@
-import SocketOutMethods from './SocketOutMethods';
-import SocketInMethods from './SocketInMethods';
-import SocketData from './SocketData';
 import {Server as SocketIOServer, ServerOptions} from 'socket.io';
 import {Server} from 'http';
 import Logger from '../logger';
+
+import type RoomData from '../../../types/RoomData';
+import type SocketInMethods from '../../../types/SocketInMethods';
+import type SocketOutMethods from '../../../types/SocketOutMethods';
 
 /**
  * Socket server implementation for kCall backend service
  */
 export default class KCallSocket {
-    private readonly chats: Map<string, { name: string, message: string }[]>;
-    private readonly _io: SocketIOServer<SocketInMethods, SocketOutMethods, {}, SocketData>;
+    private readonly rooms: Map<string, RoomData>;
+    private readonly _io: SocketIOServer<SocketInMethods, SocketOutMethods>;
     public get io() { return this._io }
 
     constructor(server: Server, options?: Partial<ServerOptions>) {
@@ -22,49 +23,67 @@ export default class KCallSocket {
             },
             ...(options ?? {})
         });
-        this.chats = new Map();
+        this.rooms = new Map();
     }
 
     public setup(): void {
         this._io.on('connection', (socket) => {
             Logger.instance.info(`[${socket.id}]: CONNECTED`)
 
-            socket.on('joinRoom', (roomID, userID, displayName: string) => {
-                Logger.instance.info(`[${socket.id}][${userID}]: JOINS ROOM ${roomID} with name ${displayName}`);
+            socket.on('joinRoom', (roomID, data) => {
+                Logger.instance.info(`[${data.userID}]: JOINS ROOM ${roomID} with name ${data.displayName}`);
                 socket.join(roomID);
-                socket.to(roomID).emit('userJoined', userID, displayName);
+                socket.to(roomID).emit('userJoined', data);
 
                 // Check room in chats map
-                if (!this.chats.has(roomID))
-                    this.chats.set(roomID, [])
-                socket.emit('joinAccepted', this.chats.get(roomID));
+                if (!this.rooms.has(roomID)) this.rooms.set(roomID, {
+                    chat: [],
+                    members: []
+                });
 
-                // Send message
+                // Return accept typingMessage to room user
+                socket.emit('joinAccepted', this.rooms.get(roomID));
+
+                // Update room info and emit metadata to room members
+                this.rooms.get(roomID).members.push(data);
+                socket.to(roomID).emit('roomDataUpdate', this.rooms.get(roomID));
+
+                // Send typingMessage
                 socket.on('sendMessage', (message) => {
-                    Logger.instance.info(`[${socket.id}][${userID}]: MESSAGE TO ROOM ${roomID} -> ${message}`)
-                    this.io.to(roomID).emit('newMessage', displayName, message);
-                    this.chats.get(roomID).push({
-                        name: displayName,
+                    Logger.instance.info(`[${data.userID}]: MESSAGE TO ROOM ${roomID} -> ${message}`)
+                    this.io.to(roomID).emit('newMessage', data.displayName, message);
+                    this.rooms.get(roomID).chat.push({
+                        name: data.displayName,
                         message
                     });
                 });
 
-                // Retrieve user data by its id
-                socket.on('whoIsIt', (userID, callback) => {
-                    Logger.instance.info(`[${socket.id}][${userID}]: LOOKING FOR ${userID} name`);
-                    callback({
-                        id: userID,
-                        name: 'This is this'
+                // User changed his track
+                socket.on('changeStreamParams', (track, isEnabled) => {
+                    const roomMember = this.rooms.get(roomID).members.find((member) => {
+                        return member.userID === data.userID;
                     });
+
+                    switch (track) {
+                        case 'video':
+                            roomMember.stream.isVideoEnabled = isEnabled;
+                            break;
+                        case 'audio':
+                            roomMember.stream.isAudioEnabled = isEnabled;
+                            break;
+                    }
+
+                    socket.to(roomID).emit('roomDataUpdate', this.rooms.get(roomID));
                 });
 
-                // TODO
-
+                // User disconnect
                 socket.on('disconnect', () => {
-                    this.io.to(roomID).emit('userLeaved', userID);
+                    this.io.to(roomID).emit('userLeaved', data.userID);
                     socket.leave(roomID);
+                    const members = this.rooms.get(roomID).members;
+                    members.splice(members.findIndex(m => m.userID === data.userID), 1)
 
-                    Logger.instance.info(`[${socket.id}][${userID}]: DISCONNECTED`)
+                    Logger.instance.info(`[${data.userID}]: DISCONNECTED`)
                 });
             });
         });

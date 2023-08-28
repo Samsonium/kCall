@@ -1,34 +1,106 @@
 <script lang="ts">
-    import {onMount} from 'svelte';
-    import {slide} from 'svelte/transition';
-    import {GearSix, X} from 'phosphor-svelte';
+    import {onDestroy, onMount} from 'svelte';
+    import {slide, fade} from 'svelte/transition';
+    import {GearSix, X, MicrophoneSlash} from 'phosphor-svelte';
 
-    /**
-     * Video element
-     */
-    export let video: HTMLVideoElement;
-
-    /**
-     * Username
-     */
+    export let stream: MediaStream;
     export let name: string;
+    export let streamSettings: {
+        isAudioEnabled: boolean;
+        isVideoEnabled: boolean;
+    } = {
+        isAudioEnabled: false,
+        isVideoEnabled: false
+    };
 
     /**
-     * Box for video element
+     * Video element for stream
      */
-    let videoBox: HTMLDivElement;
+    let video: HTMLVideoElement;
 
     /**
      * Whether to show popup with settings
      */
     let isShowingSettings = false;
 
-    onMount(() => videoBox.append(video));
+    /**
+     * Random color for video box
+     */
+    const color = [
+        '#8783D1',
+        '#34623F',
+        '#B39C4D',
+        '#FF312E',
+        '#540D6E',
+        '#0EAD69',
+        '#3BCEAC',
+        '#EE4266',
+        '#E77728',
+        '#EDB230',
+        '#587792',
+        '#C6C013',
+        '#008148',
+        '#034732',
+        '#5C5D67',
+        '#A68BA5',
+    ][Math.floor(Math.random() * 16)];
+
+    let jsNode: ScriptProcessorNode;
+
+    let isTalking = false;
+
+    onMount(() => {
+        const audioCtx = new AudioContext();
+        const analyzer = audioCtx.createAnalyser();
+        const mic = audioCtx.createMediaStreamSource(stream);
+        jsNode = audioCtx.createScriptProcessor(2048, 1, 1);
+        analyzer.smoothingTimeConstant = .8;
+        analyzer.fftSize = 1024;
+        mic.connect(analyzer);
+        analyzer.connect(jsNode);
+        jsNode.connect(audioCtx.destination);
+        jsNode.onaudioprocess = () => {
+            const array = new Uint8Array(analyzer.frequencyBinCount);
+            analyzer.getByteFrequencyData(array);
+            let values = 0;
+
+            for (let i = 0; i < array.length; i++)
+                values += array[i];
+            const avg = values / array.length;
+            isTalking = Math.round(avg) > 15;
+        };
+
+        video.srcObject = stream;
+        video.addEventListener('loadedmetadata', () => {
+            video.play();
+            video.muted = false;
+        });
+    });
+
+    onDestroy(() => {
+        video.remove();
+        jsNode.disconnect();
+    });
 </script>
 
-<div bind:this={videoBox} class="video-box">
+<div class="video-box" class:talking={isTalking}>
+    {#if !streamSettings.isVideoEnabled}
+        <div class="placeholder" transition:fade={{duration: 200}}>
+            <div class="circle" style="background: {color}">
+                {name.substring(0, 2)}
+            </div>
+        </div>
+    {/if}
+    <video bind:this={video} muted></video>
     <div class="controls">
-        <p>{name}</p>
+        <div class="name">
+            {#if !streamSettings.isAudioEnabled}
+                <div class="icon" transition:slide={{duration:200}}>
+                    <MicrophoneSlash color="white" weight="bold" size={24} />
+                </div>
+            {/if}
+            {name}
+        </div>
         <button class="settings" on:click={() => isShowingSettings = !isShowingSettings}>
             {#if isShowingSettings}
                 <X color="white" weight="bold" size={32} />
@@ -57,17 +129,49 @@
       width: 100%;
       min-width: 350px;
       height: fit-content;
+      aspect-ratio: 4 / 3;
       border-radius: 16px;
       overflow: hidden;
       margin: 8px;
+      background: black;
+      transition: outline .2s cubic-bezier(.25, 0, 0, 1);
+
+      &.talking {
+        outline: 4px solid #167bff;
+      }
 
       :global(video) {
         width: 100%;
+        transform: scaleX(-1);
+      }
+
+      div.placeholder {
+        position: absolute;
+        z-index: 2;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(black, .5);
+
+        div.circle {
+          width: 128px;
+          height: 128px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font: 700 64px Inter, Roboto, sans-serif;
+          color: white;
+          border-radius: 64px;
+        }
       }
 
       div.settings {
         position: absolute;
-        z-index: 2;
+        z-index: 3;
         right: 16px;
         bottom: 64px;
         padding: 16px;
@@ -113,10 +217,22 @@
         align-items: center;
         justify-content: space-between;
 
-        p {
+        div.name {
+          width: max-content;
+          height: 40px;
+          display: flex;
+          flex-flow: row nowrap;
+          align-items: center;
           font: 800 16px Inter, Roboto, sans-serif;
           color: white;
           text-shadow: 0 2px 4px rgba(0, 0, 0, .5);
+          background: #21272d;
+          border-radius: 16px;
+          padding: 0 16px;
+
+          .icon {
+            margin-right: 8px;
+          }
         }
 
         button.settings {

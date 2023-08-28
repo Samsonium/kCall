@@ -13,7 +13,8 @@
         ready: false,
         id: params.get('room'),
         user: params.get('user'),
-        members: {}
+        members: {},
+        chat: []
       });
     }
   });

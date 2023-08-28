@@ -1,5 +1,6 @@
 import {writable} from 'svelte/store';
 import type {MediaConnection} from 'peerjs';
+import type RoomData from '../../../types/RoomData';
 
 export const roomInfo = writable<{
 
@@ -33,4 +34,9 @@ export const streamInfo = writable<{
 }>({
     video: true,
     audio: true
+});
+
+export const room = writable<RoomData>({
+    chat: [],
+    members: []
 });

@@ -5,11 +5,11 @@
     "build:front": "yarn workspace front build",
     "build:back": "yarn workspace back build",
     "build:all": "yarn build:back && yarn build:front",
-    "build:end": "ncp ./node_modules/ ./build/node_modules/",
+    "build:end": "shx cp -r ./node_modules/ ./build/node_modules/",
     "build": "yarn build:all && yarn build:end"
   },
   "devDependencies": {
-    "ncp": "^2.0.0"
+    "shx": "^0.3.4"
   },
   "workspaces": [
     "./front",
