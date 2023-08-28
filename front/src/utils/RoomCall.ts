@@ -62,6 +62,12 @@ export default class RoomCall {
         // Create member streams store
         this.membersStreams = writable({});
 
+        // Create room store
+        this.room = writable({
+            chat: [],
+            members: []
+        });
+
         // Create self stream store
         this.selfStream = writable(null);
     }
