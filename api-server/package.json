@@ -1,0 +1,9 @@
+{
+  "name": "api-server",
+  "description": "API socket server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "samsonium",
+  "license": "MIT",
+  "private": true
+}
