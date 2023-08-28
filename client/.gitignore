@@ -4,11 +4,11 @@
 !/public
 !/src
 
-# Files
+# FIles
 !/.gitignore
 !/index.html
 !/package.json
 !/svelte.config.js
 !/tsconfig.json
 !/tsconfig.node.json
-!/vite.config.ts
+!vite.config.ts
