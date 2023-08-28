@@ -137,12 +137,10 @@ export default class RoomCall {
      * @param meta User's metadata
      */
     private handleConnection(meta?: RoomData['members'][number]) {
-        const memberStreams = this.membersStreams;
-
-        function callback(call: MediaConnectionWithMeta) {
-            const userID = meta.userID ?? call.metadata.uid;
+        const callback = (call: MediaConnectionWithMeta) => {
+            const userID = meta?.userID ?? call.metadata.uid;
             call.on('stream', (stream: MediaStream) => {
-                memberStreams.update((_memberStreams) => {
+                this.membersStreams.update((_memberStreams) => {
                     _memberStreams[userID] = {
                         peerID: userID,
                         stream
