@@ -1,0 +1,10 @@
+/*
+
+# Dirs
+!/src
+!/test
+
+# Files
+!/.gitignore
+!/package.json
+!/tsconfig.json
