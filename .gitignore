@@ -10,5 +10,6 @@
 
 # Files
 !/.gitignore
+!/ecosystem.dev.js
 !/package.json
 !/yarn.lock
