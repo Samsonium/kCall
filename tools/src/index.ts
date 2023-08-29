@@ -1,12 +1,7 @@
-import generateId from './utils/generateId';
-
-/**
- * Utilities
- */
-const utils = {
-    generateId
-}
+import * as utils from './utils';
+import * as types from './types';
 
 export {
-    utils
-}
+    utils,
+    types
+};
