@@ -11,6 +11,11 @@ export default function setupEvents(server: Server): void {
     server.on('connect', (socket: Socket<SocketClientEvents, SocketServerEvents>) => {
         logger.info('New socket has connected: ' + socket.id);
 
+        // Disconnect function
+        const handleDisconnect = () => {
+            logger.info(socket.id + ' has disconnected');
+        };
+
         // Join room event
         socket.on('joinRoom', (room, metadata) => {
             logger.info('Socket ' + socket.id + ' connecting to room ' + room, metadata);
@@ -36,12 +41,16 @@ export default function setupEvents(server: Server): void {
                 socket.to(room).emit('roomUpdated', roomData);
             });
 
-            // User leave room event
+            // User has leaved room
+            socket.off('disconnect', handleDisconnect);
             socket.on('disconnect', () => {
-                logger.info(metadata.uid + ' leaving room ' + room);
+                logger.info('User ' + socket.id + ' has disconnected');
                 service.leaveRoom(room, metadata.uid);
                 socket.to(room).emit('userLeave', metadata);
             });
         });
+
+        // User leave room event
+        socket.on('disconnect', handleDisconnect);
     });
 }
