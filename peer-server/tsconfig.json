@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./build",
+    "module": "NodeNext",
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "sourceMap": true
+  },
+  "exclude": [
+    "node_modules/"
+  ],
+  "include": [
+    "src/"
+  ]
+}
