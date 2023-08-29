@@ -13,7 +13,7 @@ let server: Server;
 /**
  * Bootstrap function
  */
-export function main() {
+export function main(port?: number) {
     const logger = createLogger({
         level: 'info',
         format: combine(
@@ -40,7 +40,7 @@ export function main() {
         generateClientId: () => {
             return utils.generateId('kuid');
         },
-        port: 7000,
+        port: port ?? 7000,
         corsOptions: {
             origin: '*'
         }
