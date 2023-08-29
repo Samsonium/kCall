@@ -6,6 +6,11 @@
   "author": "samsonium",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "start": "ts-node src/app.ts",
+    "build": "tsc",
+    "test": "vitest run"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "winston": "^3.10.0",
