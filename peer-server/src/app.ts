@@ -83,3 +83,9 @@ export function main(port?: number) {
 export function stop() {
     server.close();
 }
+
+try {
+    main();
+} catch (_) {
+    stop();
+}
