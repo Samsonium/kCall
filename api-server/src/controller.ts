@@ -1,5 +1,5 @@
 import logger from './logger';
-import {Server, type Socket} from 'socket.io';
+import type {Server, Socket} from 'socket.io';
 import type {SocketClientEvents, SocketServerEvents} from 'tools/types/types';
 
 /**
