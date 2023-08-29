@@ -1,4 +1,5 @@
 import logger from './logger';
+import * as service from './service';
 import type {Server, Socket} from 'socket.io';
 import type {SocketClientEvents, SocketServerEvents} from 'tools/types/types';
 
@@ -13,21 +14,33 @@ export default function setupEvents(server: Server): void {
         // Join room event
         socket.on('joinRoom', (room, metadata) => {
             logger.info('Socket ' + socket.id + ' connecting to room ' + room, metadata);
-            // TODO: service.joinRoom
+            const roomData = service.joinRoom(room, metadata)
+
+            // Approve connection
+            socket.join(room);
+            socket.emit('joinAccept', roomData);
+            socket.to(room).emit('userJoined', metadata);
+            logger.info('Approved connection to room ' + room + ' for socket ' + socket.id);
 
             // User sent message event
             socket.on('sendMessage', (text) => {
-                // TODO: service.sendMessage
+                logger.info(metadata.uid + ' sent message to ' + room + ' => ' + text);
+                const message = service.sendMessage(room, metadata.uid, text);
+                socket.to(room).emit('newMessage', message);
             });
 
             // User stream changed event
             socket.on('changeStream', (type, value) => {
-                // TODO: service.changeStream
+                logger.info(metadata.uid + ' set "' + type + '" track state to ' + value);
+                const roomData = service.changeStream(room, metadata.uid, type, value);
+                socket.to(room).emit('roomUpdated', roomData);
             });
 
             // User leave room event
-            socket.on('leaveRoom', () => {
-                // TODO: service.leaveRoom
+            socket.on('disconnect', () => {
+                logger.info(metadata.uid + ' leaving room ' + room);
+                service.leaveRoom(room, metadata.uid);
+                socket.to(room).emit('userLeave', metadata);
             });
         });
     });
