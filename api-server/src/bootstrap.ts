@@ -18,14 +18,16 @@ let io: SocketServer;
  * Start server
  */
 export function main(port?: number): void {
-    const usingPort = port ?? 7002;
+    const usingPort = port ?? 7910;
     const app = express();
     server = createServer(app);
     io = new SocketServer(server, {
         transports: ['websocket', 'polling'],
         allowEIO3: true,
         cors: {
-            origin: '*'
+            origin: '*',
+            methods: ['POST', 'GET'],
+            credentials: true,
         }
     });
 
