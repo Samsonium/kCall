@@ -30,7 +30,7 @@ describe('Room join and leave', () => {
 
         let sock1: Socket<SocketServerEvents, SocketClientEvents>,
             sock2: Socket<SocketServerEvents, SocketClientEvents>;
-        sock1 = io('http://localhost:8004/');
+        sock1 = io('http://127.0.0.1:8004/');
         sock1.on('connect', () => {
             sock1.on('joinAccept', () => {
                 sock1.on('roomUpdated', (room) => {
@@ -47,7 +47,7 @@ describe('Room join and leave', () => {
             sock1.emit('joinRoom', roomID, setup[0]);
         });
 
-        sock2 = io('http://localhost:8004/');
+        sock2 = io('http://127.0.0.1:8004/');
         sock2.on('connect', () => {
             sock2.on('joinAccept', () => {
                 sock2.emit('changeStream', 'audio', true);

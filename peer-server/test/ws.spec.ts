@@ -9,7 +9,7 @@ afterAll(() => stop());
 
 describe('Server test', () => {
     it('HTTP request for ID', () => new Promise<void>(done => {
-        fetch('http://localhost:7002/peerjs/id').then(res => {
+        fetch('http://127.0.0.1:7002/peerjs/id').then(res => {
             res.text().then(id => {
                 expect(id).toBeTypeOf('string');
                 expect(id).toMatch(/kuid-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})/);
@@ -18,7 +18,7 @@ describe('Server test', () => {
         })
     }));
     it('Websocket connection can connect', () => new Promise<void>((resolve, reject) => {
-        const connectionURL = new URL('peerjs', 'ws://localhost:7002/');
+        const connectionURL = new URL('peerjs', 'ws://127.0.0.1:7002/');
         connectionURL.searchParams.set('key', 'peerjs');
         connectionURL.searchParams.set('id', utils.generateId('kuid'));
         connectionURL.searchParams.set('token', 'ni789lpa2d');

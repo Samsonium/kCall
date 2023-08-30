@@ -7,7 +7,7 @@ afterAll(() => stop());
 
 describe('Base connection', () => {
     it('Open and close websocket connection', () => new Promise<void>(done => {
-        const socket = io('http://localhost:8002/', {
+        const socket = io('http://127.0.0.1:8002/', {
             transports: ['websocket']
         });
         socket.on('connect', () => {
@@ -20,7 +20,7 @@ describe('Base connection', () => {
         });
     }));
     it('Open and close polling connection', () => new Promise<void>(done => {
-        const socket = io('http://localhost:8002/', {
+        const socket = io('http://127.0.0.1:8002/', {
             transports: ['polling']
         });
         socket.on('connect', () => {

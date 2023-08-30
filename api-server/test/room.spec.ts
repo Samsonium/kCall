@@ -8,7 +8,7 @@ afterAll(() => stop());
 
 describe('Room join and leave', () => {
     it('Join room', () => new Promise<void>(done => {
-        const socket: Socket<SocketServerEvents, SocketClientEvents> = io('http://localhost:8003/');
+        const socket: Socket<SocketServerEvents, SocketClientEvents> = io('http://127.0.0.1:8003/');
 
         const userID = '54321';
         const roomID = '12345';
@@ -64,7 +64,7 @@ describe('Room join and leave', () => {
 
         let sock1: Socket<SocketServerEvents, SocketClientEvents>,
             sock2: Socket<SocketServerEvents, SocketClientEvents>;
-        sock1 = io('http://localhost:8003/');
+        sock1 = io('http://127.0.0.1:8003/');
         sock1.on('connect', () => {
             sock1.on('joinAccept', (room) => {
                 expect(room.members).toHaveLength(1);
@@ -75,7 +75,7 @@ describe('Room join and leave', () => {
             sock1.emit('joinRoom', roomID, setup[0]);
         });
 
-        sock2 = io('http://localhost:8003/');
+        sock2 = io('http://127.0.0.1:8003/');
         sock2.on('connect', () => {
             sock2.on('joinAccept', (room) => {
                 expect(room.members).toHaveLength(2);

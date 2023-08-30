@@ -35,7 +35,7 @@ export function main(port?: number) {
      * PeerJS server instance
      */
     const peerServer = PeerServer({
-        host: '0.0.0.0',
+        host: '127.0.0.1',
         port: port ?? 7001,
         proxied: true,
         generateClientId: () => {
