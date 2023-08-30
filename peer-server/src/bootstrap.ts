@@ -43,7 +43,7 @@ export function main(port?: number) {
             origin: '*'
         }
     }, (_server) => server = _server);
-    peerServer.listen(port ?? 7910);
+    peerServer.listen(port ?? 7001);
     logger.info('Peer server instantiated');
 
     /**

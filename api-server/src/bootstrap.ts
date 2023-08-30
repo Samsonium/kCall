@@ -18,7 +18,7 @@ let io: SocketServer;
  * Start server
  */
 export function main(port?: number): void {
-    const usingPort = port ?? 7910;
+    const usingPort = port ?? 7000;
     const app = express();
     server = createServer(app);
     io = new SocketServer(server, {
