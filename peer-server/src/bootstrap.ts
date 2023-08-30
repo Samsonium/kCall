@@ -35,6 +35,7 @@ export function main(port?: number) {
      * PeerJS server instance
      */
     const peerServer = PeerServer({
+        port: port ?? 7001,
         proxied: true,
         generateClientId: () => {
             return utils.generateId('kuid');
@@ -43,7 +44,6 @@ export function main(port?: number) {
             origin: '*'
         }
     }, (_server) => server = _server);
-    peerServer.listen(port ?? 7001);
     logger.info('Peer server instantiated');
 
     /**
