@@ -34,7 +34,7 @@ export function main(port?: number): void {
     setupEvents(io);
     logger.info('Socket events set');
 
-    server.listen(usingPort, () => {
+    server.listen(usingPort, '0.0.0.0', () => {
         logger.info('Server started at port ' + (usingPort ?? 7002));
     });
 }
