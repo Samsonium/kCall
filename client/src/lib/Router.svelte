@@ -83,7 +83,7 @@
 
     onMount(async () => {
         await new Promise(r => setTimeout(r, 700));
-        // validatePath(location.pathname);
+        validatePath(location.pathname);
     })
 </script>
 
