@@ -88,15 +88,15 @@
 </script>
 
 {#if pageComponent}
-    <div class="page" transition:scale={animationSetup}>
+    <div class="page" in:scale={{...animationSetup, delay: 175}} out:scale={animationSetup}>
         <svelte:component this={pageComponent} {pathParams} {queryParams}/>
     </div>
 {:else if pageComponent === null}
-    <div class="page" transition:scale={animationSetup}>
+    <div class="page" in:scale={{...animationSetup, delay: 175}} out:scale={animationSetup}>
         <Placeholder/>
     </div>
 {:else}
-    <div class="page" transition:scale={animationSetup}>
+    <div class="page" in:scale={{...animationSetup, delay: 175}} out:scale={animationSetup}>
         <Preloader/>
     </div>
 {/if}
