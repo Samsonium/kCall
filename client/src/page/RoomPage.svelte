@@ -1,12 +1,48 @@
 <script lang="ts">
-    export let params: Record<string, string> = {};
+    import {onMount} from 'svelte';
+    import {fade} from 'svelte/transition';
+    import type StreamOptions from '../types/StreamOptions';
+    import Prebath from './room/Prebath.svelte';
+    import Meet from './room/Meet.svelte';
 
-    console.log(params);
+    /**
+     * Path parameters
+     */
+    export let pathParams: Record<string, string> = {};
+
+    /**
+     * Display name in room
+     */
+    let user = '';
+
+    /**
+     * User stream options
+     */
+    let streamOptions: StreamOptions;
+
+    onMount(() => {
+        user = localStorage.getItem('last-used-name') ?? '';
+        console.log(user);
+    });
 </script>
 
-<p>Room</p>
-<ul>
-    {#each Object.entries(params) as param}
-        <li>{param[0]} = {param[1]}</li>
-    {/each}
-</ul>
+{#if !user && !streamOptions}
+    <div class="sub-page" out:fade={{duration:150}}>
+        <Meet room={pathParams.id} bind:user />
+    </div>
+{:else if user && !streamOptions}
+    <div class="sub-page" in:fade={{duration:150, delay: 150}} out:fade={{duration:150}}>
+        <Prebath {user} room={pathParams.id} bind:streamOptions />
+    </div>
+{:else}
+    <div class="sub-page" in:fade={{duration:150, delay: 150}}>
+        ROOM
+    </div>
+{/if}
+
+<style lang="scss">
+    .sub-page {
+      width: 100%;
+      height: 100%;
+    }
+</style>
