@@ -6,11 +6,6 @@ import type StreamOptions from './StreamOptions';
 export default interface MeetingConfig {
 
     /**
-     * User identifier
-     */
-    userID: string;
-
-    /**
      * Room identifier
      */
     roomID: string;
