@@ -48,7 +48,7 @@
     });
 </script>
 
-<div class="video">
+<div class="video" class:muted={!streamOptions.audio}>
     <video bind:this={video} muted></video>
     {#if !streamOptions.video}
         <div class="no-video-overlay" transition:fade={{duration: 200}}>
@@ -91,9 +91,17 @@
       z-index: 5;
       width: 100%;
       height: 100%;
-      border: 1px solid rgba(white, .5);
+      outline: 3px solid rgba(white, .25);
       border-radius: var(--round-l);
       overflow: hidden;
+
+      &.muted {
+        border-color: rgba(white, .1);
+      }
+
+      &.talking {
+        border-color: var(--accent);
+      }
 
       video {
         width: 100%;
