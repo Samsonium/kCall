@@ -24,17 +24,19 @@
     }
 
     function handleSubmitForm(): void {
-        if (!formData.name.trim()) return notify.error({
+        const preparedName = formData.name.trim().split(' ').filter(Boolean).join(' ');
+
+        if (!preparedName.trim()) return notify.error({
             message: 'Введите имя'
         });
 
         // Check name length
-        if (formData.name.length < 2 || formData.name.length > 30) return notify.error({
+        if (preparedName.length < 2 || preparedName.length > 30) return notify.error({
             message: 'Длина имени — от 2 до 30 символов'
         });
 
         // Check name format
-        if (!(/^[A-zА-я0-9 ]{2,30}$/.test(formData.name))) return notify.error({
+        if (!(/^[A-zА-я0-9 ]{2,30}$/.test(preparedName))) return notify.error({
             message: 'Имя должно состоять из букв или цифр'
         });
 
@@ -53,7 +55,7 @@
             message: 'Идентификатор комнаты не должен содержать пробелов и спец. симолов'
         });
 
-        localStorage.setItem('last-used-name', formData.name);
+        localStorage.setItem('last-used-name', preparedName);
         location.href = `/room/${formData.room}`;
     }
 
