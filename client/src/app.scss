@@ -5,13 +5,13 @@ html, body {
   height: 100%;
   padding: 0;
   margin: 0;
-  background: var(--border);
+  background: var(--panel);
 }
 
 * {
   // Colors
   --bg: #16181a;
-  --border: #272d31;
+  --panel: #272d31;
   --accent: #0059ff;
   --white: #fff;
 
