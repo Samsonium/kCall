@@ -85,6 +85,7 @@
                     }
                 }
             }).then((gottenStream) => {
+                if (!video) return;
                 video.srcObject = stream = gottenStream;
                 video.addEventListener('loadedmetadata', () => video.play(), {
                     once: true
@@ -115,13 +116,13 @@
             {/if}
         </div>
         <div class="button-line">
-            <button class="track"
+            <button type="button" class="track"
                     disabled={!tempStreamOptions.enabled}
                     class:off={!tempStreamOptions.tracks.audio}
                     on:click={changeTrack.bind(null, 'audio')}>
                 <Microphone size={24} color="white" weight="bold" />
             </button>
-            <button class="track"
+            <button type="button" class="track"
                     disabled={!tempStreamOptions.enabled}
                     class:off={!tempStreamOptions.tracks.video}
                     on:click={changeTrack.bind(null, 'video')}>
