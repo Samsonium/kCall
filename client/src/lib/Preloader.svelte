@@ -1,8 +1,12 @@
+<script lang="ts">
+    export let text = 'Загрузка данных';
+</script>
+
 <div class="preloader">
     <div class="spinner-wrapper">
         <div class="spinner"></div>
     </div>
-    <p>Загрузка данных</p>
+    <p>{text}</p>
 </div>
 
 <style lang="scss">
