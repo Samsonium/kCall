@@ -8,7 +8,7 @@
 <div class="form-group">
     <label for={id}>{label}</label>
     <div class="input-line">
-        <input class:no-r-round={$$slots.default} type="text" bind:value>
+        <input {id} class:no-r-round={$$slots.default} type="text" bind:value>
         <slot/>
     </div>
 </div>
