@@ -4,6 +4,7 @@
     import type StreamOptions from '../types/StreamOptions';
     import Prebath from './room/Prebath.svelte';
     import Meet from './room/Meet.svelte';
+    import Room from './room/Room.svelte';
 
     /**
      * Path parameters
@@ -22,7 +23,6 @@
 
     onMount(() => {
         user = localStorage.getItem('last-used-name') ?? '';
-        console.log(user);
     });
 </script>
 
@@ -36,7 +36,7 @@
     </div>
 {:else}
     <div class="sub-page" in:fade={{duration:150, delay: 150}}>
-        ROOM
+        <Room {streamOptions} username={user} roomID={pathParams.id} />
     </div>
 {/if}
 
