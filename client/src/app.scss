@@ -9,11 +9,15 @@ html, body {
 }
 
 * {
+  box-sizing: border-box;
+
   // Colors
   --bg: #16181a;
   --panel: #272d31;
   --accent: #0059ff;
   --white: #fff;
+  --success: #71b738;
+  --error: #c03e3e;
 
   // Border radius
   --round-l: 16px;
@@ -34,10 +38,14 @@ p {
 }
 
 button {
-  padding: 8px 16px;
+  padding: 4px 16px;
   border-radius: var(--round-s);
   font: 500 16px Inter, Roboto, sans-serif;
   cursor: pointer;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
   transition: transform .2s cubic-bezier(.25, 0, 0, 1);
 
   &:hover {
@@ -50,7 +58,17 @@ button {
 
   &.accent {
     background: var(--accent);
-    border: 1px solid rgba(var(--white), .15);
+    border: 1px solid rgba(white, 0.32);
     color: var(--white);
+  }
+
+  &.secondary {
+    background: #424548;
+    border: 1px solid rgba(white, 0.11);
+    color: var(--white);
+  }
+
+  & > *:first-child {
+    margin-right: 8px;
   }
 }
