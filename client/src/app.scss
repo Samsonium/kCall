@@ -18,7 +18,7 @@ html, body {
   --accent: #0059ff;
   --white: #fff;
   --success: #71b738;
-  --error: #c03e3e;
+  --error: #ff3b3b;
 
   // Border radius
   --round-l: 16px;
@@ -47,10 +47,11 @@ button {
   flex-flow: row nowrap;
   align-items: center;
   justify-content: center;
-  transition: transform .2s cubic-bezier(.25, 0, 0, 1);
+  transition: transform .2s cubic-bezier(.25, 0, 0, 1),
+              filter .2s cubic-bezier(.25, 0, 0, 1);
 
   &:hover:not(:disabled) {
-    transform: scale(1.02);
+    filter: brightness(90%);
   }
 
   &:active:not(:disabled) {
@@ -64,6 +65,12 @@ button {
 
   &.accent {
     background: var(--accent);
+    border: 1px solid rgba(white, 0.32);
+    color: var(--white);
+  }
+
+  &.danger {
+    background: var(--error);
     border: 1px solid rgba(white, 0.32);
     color: var(--white);
   }
