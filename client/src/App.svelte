@@ -1,8 +1,10 @@
 <script lang="ts">
   import Router from './lib/Router.svelte';
+  import Notifier from './ui/Notifier.svelte';
   import routes from './routes';
 </script>
 
+<Notifier />
 <div class="page">
     <Router {routes} />
 </div>
