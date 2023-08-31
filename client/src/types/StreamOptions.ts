@@ -11,7 +11,7 @@ export default interface StreamOptions {
     /**
      * Tracks setup in stream
      */
-    tracks?: {
+    tracks: {
         audio: boolean;
         video: boolean;
     };
