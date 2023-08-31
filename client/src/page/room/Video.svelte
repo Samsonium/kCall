@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {onMount} from 'svelte';
+    import {onMount, onDestroy} from 'svelte';
     import {slide, fade} from 'svelte/transition';
     import {MicrophoneSlash, GearFine} from 'phosphor-svelte';
     import type StreamOptions from '../../types/StreamOptions';
@@ -11,6 +11,12 @@
     let video: HTMLVideoElement;
 
     let isSettingsOpen = false;
+
+    let isTalking = false;
+
+    let audioAnalyzerNode: AnalyserNode;
+
+    let audioProcessInterval: any;
 
     const color = [
         '#8783D1',
@@ -44,11 +50,33 @@
         video.muted = !streamOptions.video;
         video.addEventListener('loadedmetadata', () => {
             video.play();
+
+            const audioCtx = new AudioContext();
+            const msAudioSrcNode = audioCtx.createMediaStreamSource(stream);
+            audioAnalyzerNode = audioCtx.createAnalyser();
+            msAudioSrcNode.connect(audioAnalyzerNode);
+
+            const pcmData = new Float32Array(audioAnalyzerNode.fftSize);
+            const onProcess = () => {
+                audioAnalyzerNode.getFloatTimeDomainData(pcmData);
+
+                let sumSquares = .0;
+                for (const ampl of pcmData)
+                    sumSquares += Math.pow(ampl, 2);
+
+                isTalking = Math.sqrt(sumSquares / pcmData.length) > 0.0005;
+            };
+
+            audioProcessInterval = setInterval(() => onProcess(), 200);
         }, {once: true});
     });
+
+    onDestroy(() => {
+        clearInterval(audioProcessInterval);
+    })
 </script>
 
-<div class="video" class:muted={!streamOptions.audio}>
+<div class="video" class:muted={!streamOptions.audio} class:talking={isTalking}>
     <video bind:this={video} muted></video>
     {#if !streamOptions.video}
         <div class="no-video-overlay" transition:fade={{duration: 200}}>
@@ -94,13 +122,14 @@
       outline: 3px solid rgba(white, .25);
       border-radius: var(--round-l);
       overflow: hidden;
+      transition: outline .2s cubic-bezier(.25, 0, 0, 1);
 
       &.muted {
-        border-color: rgba(white, .1);
+        outline-color: rgba(white, .1);
       }
 
       &.talking {
-        border-color: var(--accent);
+        outline-color: var(--accent);
       }
 
       video {
