@@ -24,6 +24,9 @@
     }
 
     function handleSubmitForm(): void {
+        if (!formData.name.trim()) return notify.error({
+            message: 'Введите имя'
+        });
 
         // Check name length
         if (formData.name.length < 2 || formData.name.length > 30) return notify.error({
@@ -33,6 +36,11 @@
         // Check name format
         if (!(/^[A-zА-я0-9 ]{2,30}$/.test(formData.name))) return notify.error({
             message: 'Имя должно состоять из букв или цифр'
+        });
+
+        // Check room id
+        if (!formData.room.trim()) return notify.error({
+            message: 'Введите идентификатор комнаты'
         });
 
         // Check room length
