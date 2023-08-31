@@ -10,6 +10,7 @@ html, body {
 
 * {
   box-sizing: border-box;
+  user-select: none;
 
   // Colors
   --bg: #16181a;
@@ -48,12 +49,17 @@ button {
   justify-content: center;
   transition: transform .2s cubic-bezier(.25, 0, 0, 1);
 
-  &:hover {
+  &:hover:not(:disabled) {
     transform: scale(1.02);
   }
 
-  &:active {
+  &:active:not(:disabled) {
     transform: scale(.98);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: .35;
   }
 
   &.accent {
@@ -68,7 +74,7 @@ button {
     color: var(--white);
   }
 
-  & > *:first-child {
-    margin-right: 8px;
+  & > *:nth-child(2) {
+    margin-left: 8px;
   }
 }
