@@ -12,7 +12,9 @@
         Microphone,
         Webcam,
         Screencast,
-        ArrowClockwise
+        WebcamSlash,
+        ArrowClockwise,
+        MicrophoneSlash
     } from 'phosphor-svelte';
     import type {RoomData} from 'tools/types/types';
     import type RoomStreams from '../../types/RoomStreams';
@@ -174,6 +176,26 @@
 
             <div class="self-video">
                 <video bind:this={selfVideo} muted></video>
+                {#if $state !== 'ready'}
+                    <div class="preloader" transition:fade={{duration: 150}}>
+                        <div class="circle-box">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                {/if}
+                {#if !streamOptions.tracks.audio && $state === 'ready'}
+                    <div class="microphone-off" transition:fade={{duration: 150}}>
+                        <MicrophoneSlash size={24} color="black" weight="bold"/>
+                        <span>Микрофон выключен</span>
+                    </div>
+                {/if}
+                {#if !streamOptions.tracks.video && $state === 'ready'}
+                    <div class="webcam-off" transition:fade={{duration: 150}}>
+                        <div class="circle">
+                            <WebcamSlash size={40} color="white" />
+                        </div>
+                    </div>
+                {/if}
             </div>
         </div>
     </div>
@@ -201,6 +223,76 @@
         border: 1px solid var(--panel);
         border-radius: var(--round-l);
         overflow: hidden;
+
+        .microphone-off {
+          position: absolute;
+          z-index: 8;
+          left: 16px;
+          bottom: 16px;
+          padding: 8px;
+          background: white;
+          border-radius: 32px;
+          display: flex;
+          flex-flow: row nowrap;
+          align-items: center;
+
+          span {
+            margin-left: 8px;
+            font: 500 14px Inter, Roboto, sans-serif;
+            color: black;
+          }
+        }
+
+        .webcam-off {
+          position: absolute;
+          z-index: 7;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--error);
+          }
+        }
+
+        .preloader {
+          position: absolute;
+          z-index: 9;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .circle-box {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .circle {
+              width: 24px;
+              height: 24px;
+              border-radius: 24px;
+              border: 2px solid white;
+              border-bottom-color: rgba(white, .25);
+              animation: spin .5s linear infinite;
+            }
+          }
+        }
 
         video {
           width: 100%;
@@ -342,6 +434,12 @@
           background: var(--panel);
           border: 1px solid rgba(white, .5);
         }
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
     }
 </style>
