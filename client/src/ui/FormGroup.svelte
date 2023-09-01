@@ -76,12 +76,13 @@
             background: transparent;
             border: none;
           }
-
-          :global(& > *:not(input)) {
-            border-top-left-radius: 0;
-            border-bottom-left-radius: 0;
-          }
         }
+      }
+    }
+
+    @media only screen and (max-width: 750px) {
+      .stacked {
+        height: max-content !important;
       }
     }
 </style>

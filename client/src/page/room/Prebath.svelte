@@ -145,9 +145,14 @@
       align-items: center;
       justify-content: center;
       padding: 16px;
+      
+      h1 {
+        text-align: center;
+      }
 
       p {
         margin-bottom: 24px;
+        text-align: center;
 
         a {
           color: white;
@@ -221,6 +226,16 @@
           button.accent {
             flex: 1;
           }
+        }
+      }
+    }
+
+    @media only screen and (max-width: 750px) {
+      .button-line {
+        padding: 0 !important;
+
+        button {
+          height: 42px !important;
         }
       }
     }

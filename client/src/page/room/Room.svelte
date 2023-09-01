@@ -592,6 +592,8 @@
       .videos {
         width: 100%;
         flex: 1;
+        overflow-x: hidden;
+        overflow-y: auto;
       }
 
       .toolbar {
@@ -648,6 +650,44 @@
     @keyframes spin {
       to {
         transform: rotate(360deg);
+      }
+    }
+
+    @media only screen and (max-width: 750px) {
+      button span {
+        display: none !important;
+        margin: 0 !important;
+      }
+
+      .header {
+        .text .status p {
+          font-size: 14px;
+        }
+
+        .actions button {
+          width: 42px !important;
+          height: 42px;
+          padding: 0 !important;
+          padding-right: 8px !important;
+        }
+      }
+
+      .self-video {
+        width: 30vw !important;
+
+        .microphone-off {
+          left: 8px !important;
+          bottom: 8px !important;
+
+          span {
+            display: none !important;
+          }
+        }
+
+        .webcam-off .circle {
+          width: 64px !important;
+          height: 64px !important;
+        }
       }
     }
 </style>

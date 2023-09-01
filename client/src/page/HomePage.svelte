@@ -129,4 +129,27 @@
         }
       }
     }
+
+    @media only screen and (max-width: 750px) {
+      .home-page {
+        padding: 0;
+        align-items: flex-start;
+        justify-content: flex-start;
+      }
+
+      form {
+        flex-flow: column-reverse !important;
+        border: none !important;
+        border-radius: 0 !important;
+
+        .cover {
+          height: 200px !important;
+          overflow: hidden !important;
+
+          img {
+            height: 200px !important;
+          }
+        }
+      }
+    }
 </style>

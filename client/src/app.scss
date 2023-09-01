@@ -86,3 +86,9 @@ button {
     margin-left: 8px;
   }
 }
+
+@media only screen and (max-width: 750px) {
+  button {
+    height: 42px;
+  }
+}
