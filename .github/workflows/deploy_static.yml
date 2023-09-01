@@ -34,12 +34,13 @@ jobs:
           known_hosts: 'just-a-placeholder'
       - name: Adding known hosts
         run: ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-      - name: Install rsync
-        run: |
-          apt update
-          apt install -y rsync
-      - name: Deploy service
-        run: |
-          rsync -avz --mkpath --progress -e "ssh -p ${{ secrets.SSH_PORT }}" \
-            ${{ github.workspace }}/static-server/build/ \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/static/
+      - name: Deploy
+        uses: burnett01/rsync-deployments@6.0.0
+        with:
+          switches: -avz -mkpath -progress
+          path: static-server/build/
+          remote_path: ~/static/
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_key: ${{ secrets.SSH_PKEY }}
