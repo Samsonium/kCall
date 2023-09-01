@@ -41,7 +41,7 @@ jobs:
 
   # Finish pipeline with restarting services
   finish:
-    needs: [ peer, api ]
+    needs: [ peer, api, static ]
     uses: ./.github/workflows/deploy_finish.yml
     secrets:
       SSH_HOST: ${{ secrets.SSH_HOST }}
