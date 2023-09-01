@@ -70,7 +70,7 @@
         <div class="text">
             <h1>Добро пожаловать в kCall!</h1>
             <FormGroup label="Как Вас зовут?" bind:value={formData.name} />
-            <FormGroup label="Как Вас зовут?" bind:value={formData.room}>
+            <FormGroup label="Идентификатор комнаты" bind:value={formData.room}>
                 <button type="button" class="secondary" on:click={generateRoomId}>Сгенерировать</button>
             </FormGroup>
             <button type="submit" class="accent">
