@@ -2,17 +2,17 @@
   "name": "kcall",
   "private": true,
   "scripts": {
-    "build:front": "yarn workspace front build",
-    "build:back": "yarn workspace back build",
-    "build:all": "yarn build:back && yarn build:front",
-    "build:end": "shx cp -r ./node_modules/ ./build/node_modules/",
-    "build": "yarn build:all && yarn build:end"
+    "dev:start": "pm2 start ecosystem.dev.js --env dev",
+    "dev:stop": "pm2 stop ecosystem.dev.js"
   },
-  "devDependencies": {
-    "shx": "^0.3.4"
+  "dependencies": {
+    "pm2": "^5.3.0"
   },
   "workspaces": [
-    "./front",
-    "./back"
+    "client",
+    "api-server",
+    "peer-server",
+    "static-server",
+    "tools"
   ]
 }

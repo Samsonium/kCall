@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+html, body {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background: var(--panel);
+}
+
+* {
+  box-sizing: border-box;
+  user-select: none;
+  outline: none;
+
+  // Colors
+  --bg: #16181a;
+  --panel: #272d31;
+  --accent: #0059ff;
+  --white: #fff;
+  --success: #71b738;
+  --error: #ff3b3b;
+
+  // Border radius
+  --round-l: 16px;
+  --round-s: 8px;
+}
+
+h1 {
+  font: 700 24px Inter, Roboto, sans-serif;
+  color: var(--white);
+}
+
+p {
+  font: 400 16px Inter, Roboto, sans-serif;
+  color: var(--white);
+  opacity: .75;
+  padding: 0;
+  margin: 0;
+}
+
+button {
+  padding: 4px 16px;
+  border-radius: var(--round-s);
+  font: 500 16px Inter, Roboto, sans-serif;
+  cursor: pointer;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+  transition: transform .2s cubic-bezier(.25, 0, 0, 1),
+              filter .2s cubic-bezier(.25, 0, 0, 1);
+
+  &:hover:not(:disabled) {
+    filter: brightness(90%);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(.98);
+  }
+
+  &:disabled {
+    cursor: default;
+    opacity: .35;
+  }
+
+  &.accent {
+    background: var(--accent);
+    border: 1px solid rgba(white, 0.32);
+    color: var(--white);
+  }
+
+  &.danger {
+    background: var(--error);
+    border: 1px solid rgba(white, 0.32);
+    color: var(--white);
+  }
+
+  &.secondary {
+    background: #424548;
+    border: 1px solid rgba(white, 0.11);
+    color: var(--white);
+  }
+
+  & > *:nth-child(2) {
+    margin-left: 8px;
+  }
+}
+
+@media only screen and (max-width: 750px) {
+  button {
+    height: 42px;
+  }
+}

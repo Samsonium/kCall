@@ -1,0 +1,44 @@
+name: Finish build
+on:
+  workflow_call:
+    secrets:
+      SSH_HOST:
+        required: true
+      SSH_USER:
+        required: true
+      SSH_PORT:
+        required: true
+      SSH_PKEY:
+        required: true
+jobs:
+  restart_services:
+    name: Restart all services
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PKEY }}
+          known_hosts: 'just-a-placeholder'
+      - name: Adding known hosts
+        run: ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      - name: Configure SSH
+        run: |
+          echo "${{ secrets.SSH_PKEY }}" > ${{ github.workspace }}/identity.key
+          chmod 600 ${{ github.workspace }}/identity.key
+          cat >>~/.ssh/config <<END
+          Host staging
+            HostName ${{ secrets.SSH_HOST }}
+            User ${{ secrets.SSH_USER }}
+            Port ${{ secrets.SSH_PORT }}
+            IdentityFile ${{ github.workspace }}/identity.key
+            StrictHostKeyChecking no
+          END
+      - name: Check pm2 installation
+        run: ssh staging 'npm i -g pm2'
+      - name: Restart Peer server
+        run: ssh staging 'cd ~/peer/ && pm2 restart app.js || pm2 start app.js'
+      - name: Restart API server
+        run: ssh staging 'cd ~/api/ && pm2 restart app.js || pm2 start app.js'
+      - name: Restart Static server
+        run: ssh staging 'cd ~/static/ && pm2 restart app.js || pm2 start app.js'

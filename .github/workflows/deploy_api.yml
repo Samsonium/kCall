@@ -1,0 +1,43 @@
+name: Deploy API server
+on:
+  workflow_call:
+    secrets:
+      SSH_HOST:
+        required: true
+      SSH_USER:
+        required: true
+      SSH_PORT:
+        required: true
+      SSH_PKEY:
+        required: true
+jobs:
+  build_and_deploy_peer:
+    name: Build and deploy API server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+      - name: Install yarn
+        run: npm i -g yarn
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: Build tools
+        run: yarn workspace tools build
+      - name: Build service
+        run: yarn workspace api-server build
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PKEY }}
+          known_hosts: 'just-a-placeholder'
+      - name: Adding known hosts
+        run: ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      - name: Install rsync
+        run: |
+          apt update
+          apt install -y rsync
+      - name: Deploy service
+        run: |
+          rsync -avz --mkpath --progress -e "ssh -p ${{ secrets.SSH_PORT }}" \
+            ${{ github.workspace }}/api-server/build/ \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/api/

@@ -1,41 +1,50 @@
-name: Deployment actions
+name: Deploy services
 on:
   push:
     branches:
       - master
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup NodeJS
-        uses: actions/setup-node@v3
-        with:
-          cache: 'yarn'
-      - name: Install deps
-        run: yarn install --frozen-lockfile
-      - name: Test
-        run: yarn workspace back test
-  deploy:
-    needs:
-      - test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup NodeJS
-        uses: actions/setup-node@v3
-        with:
-          cache: 'yarn'
-      - name: Install deps
-        run: yarn install --frozen-lockfile
-      - name: Build
-        run: yarn build
-      - name: Deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: 289fc86d61c8.hosting.myjino.ru
-          username: j9047948_deploy
-          password: ${{ secrets.ftp_password }}
-          local-dir: ./build/
+
+  # Unit testing for all packages
+  tests:
+    uses: ./.github/workflows/deploy_tests.yml
+
+  # Build and deploy Peer server
+  peer:
+    needs: [ tests ]
+    uses: ./.github/workflows/deploy_peer.yml
+    secrets:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_PKEY: ${{ secrets.SSH_PKEY }}
+
+  # Build and deploy API server with sockets
+  api:
+    needs: [ tests ]
+    uses: ./.github/workflows/deploy_api.yml
+    secrets:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_PKEY: ${{ secrets.SSH_PKEY }}
+
+  # Build and deploy static server with client
+  static:
+    needs: [ tests ]
+    uses: ./.github/workflows/deploy_static.yml
+    secrets:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_PKEY: ${{ secrets.SSH_PKEY }}
+
+  # Finish pipeline with restarting services
+  finish:
+    needs: [ peer, api ]
+    uses: ./.github/workflows/deploy_finish.yml
+    secrets:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_PKEY: ${{ secrets.SSH_PKEY }}
