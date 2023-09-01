@@ -8,4 +8,7 @@ export default defineConfig({
       scss: true
     })
   })],
+  build: {
+    outDir: '../static-server/build/public/'
+  }
 })

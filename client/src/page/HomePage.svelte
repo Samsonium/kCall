@@ -1,6 +1,5 @@
 <script lang="ts">
     import {onMount} from 'svelte';
-    import {utils} from 'tools';
     import {notify} from '../utils/notifier';
     import FormGroup from '../ui/FormGroup.svelte';
     import {ArrowRight} from 'phosphor-svelte';
@@ -20,7 +19,7 @@
     };
 
     function generateRoomId(): void {
-        formData.room = utils.generateId('kcall', 2);
+        formData.room = 'kcall-xxxx-xxxx'.replaceAll(/x/g, () => Math.floor(Math.random() * 9).toString())
     }
 
     function handleSubmitForm(): void {

@@ -16,9 +16,7 @@ jobs:
           yarn workspace tools build
           yarn workspace peer-server build
           yarn workspace api-server build
-      # TODO: static-server build
       - name: Test Peer server
         run: yarn workspace peer-server test
       - name: Test API server
         run: yarn workspace api-server test
-      # TODO: static-server test

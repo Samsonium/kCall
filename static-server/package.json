@@ -6,11 +6,15 @@
   "author": "samsonium",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "build": "esbuild src/app.ts --bundle --platform=node --outfile=./build/app.js"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.2"
   },
   "devDependencies": {
+    "esbuild": "^0.19.2",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2",
     "@types/node": "^20.5.7",

@@ -29,7 +29,15 @@ jobs:
       SSH_PORT: ${{ secrets.SSH_PORT }}
       SSH_PKEY: ${{ secrets.SSH_PKEY }}
 
-  # TODO: Build and deploy static server with client
+  # Build and deploy static server with client
+  static:
+    needs: [ tests ]
+    uses: ./.github/workflows/deploy_static.yml
+    secrets:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_PKEY: ${{ secrets.SSH_PKEY }}
 
   # Finish pipeline with restarting services
   finish:

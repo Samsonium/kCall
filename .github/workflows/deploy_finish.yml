@@ -40,3 +40,5 @@ jobs:
         run: ssh staging 'cd ~/peer/ && pm2 restart app.js || pm2 start app.js'
       - name: Restart API server
         run: ssh staging 'cd ~/api/ && pm2 restart app.js || pm2 start app.js'
+      - name: Restart Static server
+        run: ssh staging 'cd ~/static/ && pm2 restart app.js || pm2 start app.js'
