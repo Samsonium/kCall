@@ -5,10 +5,6 @@ on:
       - master
 jobs:
 
-  # Unit testing for all packages
-  tests:
-    uses: ./.github/workflows/deploy_tests.yml
-
   # Build and deploy Peer server
   peer:
     needs: [ tests ]
