@@ -38,7 +38,7 @@ export function main(port?: number) {
         port: port ?? 7001,
         proxied: true,
         generateClientId: () => {
-            const prefix = 'kusr';
+            const prefix = 'kuid';
             const blocksCount = 4;
 
             const generateBlock = () => Math.random().toString(16).substring(2, 6);
