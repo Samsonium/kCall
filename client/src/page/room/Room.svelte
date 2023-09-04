@@ -21,19 +21,13 @@
     import type {Writable} from 'svelte/store';
     import type StreamOptions from '../../types/StreamOptions';
 
-    /**
-     * User identifier
-     */
+    /** User identifier */
     export let username: string;
 
-    /**
-     * Room identifier
-     */
+    /** Room identifier */
     export let roomID: string;
 
-    /**
-     * User stream tracks options
-     */
+    /** User stream tracks options */
     export let streamOptions: StreamOptions;
 
     const statuses = {
@@ -42,44 +36,28 @@
         ready: 'Соединение установлено'
     };
 
-    /**
-     * User's local stream
-     */
+    /** User's local stream */
     let selfStream: MediaStream;
 
-    /**
-     * Video element for local stream
-     */
+    /** Video element for local stream */
     let selfVideo: HTMLVideoElement;
 
-    /**
-     * Room data
-     */
+    /** Room data */
     let room: Writable<RoomData>;
 
-    /**
-     * Room member streams
-     */
+    /** Room member streams */
     let streams: Writable<RoomStreams>;
 
-    /**
-     * Connecting state
-     */
+    /** Connecting state */
     let state: Writable<'disconnected' | 'connecting' | 'ready'>;
 
-    /**
-     * Chat visibility state
-     */
+    /** Chat visibility state */
     let isChatOpen = false;
 
-    /**
-     * HTML element with scrollable chat
-     */
+    /** HTML element with scrollable chat */
     let chatHistory: HTMLDivElement;
 
-    /**
-     * Typing message value
-     */
+    /** Typing message value */
     let messageValue = '';
 
     /**
