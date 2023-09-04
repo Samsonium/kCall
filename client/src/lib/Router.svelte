@@ -61,7 +61,11 @@
 
                 // Parameter request check
                 if (routePart.startsWith(':')) {
-                    _pathParams[routePart.substring(1)] = gotPart;
+                    let preparedPart = decodeURIComponent(gotPart);
+                    if (preparedPart.startsWith('web+kcall://'))
+                        preparedPart = preparedPart.substring(preparedPart.indexOf('://') + 3);
+
+                    _pathParams[routePart.substring(1)] = preparedPart;
                 } else if (routePart.toLowerCase() !== gotPart.toLowerCase()) {
                     isFound = false;
                     break;

@@ -2,6 +2,12 @@
   import Router from './lib/Router.svelte';
   import Notifier from './ui/Notifier.svelte';
   import routes from './routes';
+  import {onMount} from 'svelte';
+
+  onMount(() => {
+      if (navigator?.registerProtocolHandler)
+          navigator.registerProtocolHandler('web+kcall', '/room/%s');
+  });
 </script>
 
 <Notifier />

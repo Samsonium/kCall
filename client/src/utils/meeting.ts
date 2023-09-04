@@ -4,6 +4,8 @@ import {io, Socket} from 'socket.io-client';
 import {get, writable, type Writable} from 'svelte/store';
 import type {
     RoomData,
+    RoomMember,
+    RoomMessage,
     SocketClientEvents,
     SocketServerEvents
 } from 'tools/types/types';
@@ -149,9 +151,25 @@ export default class Meeting {
     private setupPeer(): Promise<void> {
         return new Promise<void>((done, error) => {
             this.peer = new Peer({
-                debug: 1,
+                debug: 2,
                 host: 'peer.k-call.ru',
-                secure: true
+                secure: true,
+                config: {
+                    iceServers: [
+                        {urls: 'stun:stun.arbuz.ru:3478'},
+                        {urls: 'stun:stun.chathelp.ru:3478'},
+                        {urls: 'stun:stun.comtube.ru:3478'},
+                        {urls: 'stun:stun.demos.ru:3478'},
+                        {urls: 'stun:stun.kanet.ru:3478'},
+                        {urls: 'stun:stun.mgn.ru:3478'},
+                        {urls: 'stun:stun.ooonet.ru:3478'},
+                        {urls: 'stun:stun.sipnet.ru:3478'},
+                        {urls: 'stun:stun.skylink.ru:3478'},
+                        {urls: 'stun:stun.tis-dialog.ru:3478'},
+                        {urls: 'stun:stun.l.google.com:19302'},
+                    ],
+                    bundlePolicy: 'max-bundle'
+                } satisfies RTCConfiguration
             });
 
             // Open connection event
@@ -233,18 +251,18 @@ export default class Meeting {
     private setupSocketEvents(): void {
 
         // On room join request approved
-        this.socket!.on('joinAccept', (room) => {
+        this.socket!.on('joinAccept', (room: RoomData) => {
             this.room.set(room);
             this.state.set('ready');
         });
 
         // On room data update
-        this.socket!.on('roomUpdated', (room) => {
+        this.socket!.on('roomUpdated', (room: RoomData) => {
             this.room.set(room);
         });
 
         // On user room join
-        this.socket!.on('userJoined', (user) => {
+        this.socket!.on('userJoined', (user: RoomMember) => {
             this.peerHandler({userID: user.uid}).call();
             this.room.update((room) => {
                 room.members.push(user);
@@ -255,8 +273,16 @@ export default class Meeting {
             });
         });
 
+        // On new message
+        this.socket!.on('newMessage', (message: RoomMessage) => {
+            this.room.update((room) => {
+                room.chat.push(message);
+                return room;
+            });
+        });
+
         // On user leave room
-        this.socket!.on('userLeave', (user) => {
+        this.socket!.on('userLeave', (user: RoomMember) => {
             this._streams.update((streams) => {
                 delete streams[user.uid];
                 return streams;
