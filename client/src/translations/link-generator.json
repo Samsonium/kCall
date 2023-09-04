@@ -1,0 +1,14 @@
+{
+  "ru": {
+    "error_title": "Ошибка!",
+    "error_msg": "Не удалось скопировать пригласительную ссылку",
+    "success_title": "Готово!",
+    "success_msg": "Ссылка скопирована в буфер"
+  },
+  "en": {
+    "error_title": "Whoops!",
+    "error_msg": "Failed to copy invitation link",
+    "success_title": "Done!",
+    "success_msg": "Invitation link copied to clipboard"
+  }
+}

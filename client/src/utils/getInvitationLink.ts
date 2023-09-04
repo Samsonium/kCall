@@ -1,4 +1,8 @@
 import {notify} from './notifier';
+import i18n from './i18n';
+import trLinkGenerator from '../translations/link-generator.json';
+
+const translate = i18n(trLinkGenerator);
 
 /**
  * Generate invitation link and copy
@@ -13,13 +17,13 @@ export default function getInvitationLink(): void {
 
     if (!window?.navigator?.clipboard?.writeText) {
         notify.error({
-            title: 'Ошибка!',
-            message: 'Не удалось скопировать пригласительную ссылку'
+            title: translate('error_title'),
+            message: translate('error_msg')
         });
     } else {
         navigator.clipboard.writeText(resultURL.toString()).then(() => notify.success({
-            title: 'Готово!',
-            message: 'Ссылка скопирована в буфер'
+            title: translate('success_title'),
+            message: translate('success_msg')
         }));
     }
 }
