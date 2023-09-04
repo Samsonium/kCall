@@ -1,7 +1,6 @@
 import {createLogger, format, transports} from 'winston';
 import {PeerServer} from 'peer';
 import {Server} from "http";
-import {utils} from 'tools';
 
 // Format loggers
 const {combine, timestamp, printf} = format;
@@ -39,7 +38,11 @@ export function main(port?: number) {
         port: port ?? 7001,
         proxied: true,
         generateClientId: () => {
-            return utils.generateId('kuid');
+            const prefix = 'kusr';
+            const blocksCount = 4;
+
+            const generateBlock = () => Math.random().toString(16).substring(2, 6);
+            return [prefix, ...(new Array(blocksCount)).fill(0).map(generateBlock)].join('-');
         },
         corsOptions: {
             origin: '*'
