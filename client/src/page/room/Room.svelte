@@ -99,6 +99,8 @@
 
     let meet: Meeting;
     onMount(async () => {
+        getInvitationLink();
+
         meet = new Meeting({
             roomID,
             streamOptions,
