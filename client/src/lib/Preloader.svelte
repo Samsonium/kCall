@@ -1,5 +1,10 @@
 <script lang="ts">
-    export let text = 'Загрузка данных';
+    import i18n from '../utils/i18n';
+    import trLib from '../translations/lib.json';
+
+    const translate = i18n(trLib);
+
+    export let text = translate('loading');
 </script>
 
 <div class="preloader">

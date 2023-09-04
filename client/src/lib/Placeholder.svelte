@@ -1,8 +1,15 @@
+<script lang="ts">
+    import i18n from '../utils/i18n';
+    import trLib from '../translations/lib.json';
+
+    const translate = i18n(trLib);
+</script>
+
 <div class="placeholder">
-    <p>Страница не найдена</p>
+    <p>{translate('page_not_found')}</p>
 
     <button class="accent" on:click={() => location.href = '/'}>
-        Вернуться на главную
+        {translate('go_home')}
     </button>
 </div>
 

@@ -1,0 +1,12 @@
+{
+  "ru": {
+    "page_not_found": "Страница не найдена",
+    "go_home": "Вернуться на главную",
+    "loading": "Загрузка данных"
+  },
+  "en": {
+    "page_not_found": "Page not found",
+    "go_home": "Go to homepage",
+    "loading": "Now loading"
+  }
+}
