@@ -1,8 +1,11 @@
 <script lang="ts">
     import {notify} from '../../utils/notifier';
     import getInvitationLink from '../../utils/getInvitationLink';
+    import i18n from '../../utils/i18n';
     import FormGroup from '../../ui/FormGroup.svelte';
     import {ArrowRight} from 'phosphor-svelte';
+    import trFormValidation from '../../translations/form-validation.json';
+    import trMeet from '../../translations/meet.json';
 
     /**
      * Room ID
@@ -13,6 +16,8 @@
      * Username binding
      */
     export let user: string;
+
+    const translate = i18n(trFormValidation, trMeet);
 
     /**
      * Username binding to input
@@ -26,17 +31,17 @@
         const preparedName = tempName.trim().split(' ').filter(Boolean).join(' ');
 
         if (!preparedName) return notify.error({
-            message: 'Введите имя'
+            message: translate('no_name')
         });
 
         // Check name length
         if (preparedName.length < 2 || preparedName.length > 30) return notify.error({
-            message: 'Длина имени — от 2 до 30 символов'
+            message: translate('invalid_name_length')
         });
 
         // Check name format
         if (!(/^[A-zА-я0-9 ]{2,30}$/.test(preparedName))) return notify.error({
-            message: 'Имя должно состоять из букв или цифр'
+            message: translate('invalid_name_format')
         });
 
         localStorage.setItem('last-used-name', preparedName);
@@ -46,14 +51,14 @@
 
 <div class="meet">
     <form on:submit|preventDefault={handleSubmitForm}>
-        <h1>Давайте знакомиться!</h1>
+        <h1>{translate('meet')}</h1>
         <p>
-            Подготовка ко входу в комнату
+            {translate('prepare')}
             <a href="#generate-link" on:click={getInvitationLink}>{room}</a>
         </p>
-        <FormGroup label="Как Вас зовут?" bind:value={tempName} />
+        <FormGroup label={translate('name_label')} bind:value={tempName} />
         <button class="accent">
-            <span>Далее</span>
+            <span>{translate('next')}</span>
             <ArrowRight size={16} color="white" weight="bold" />
         </button>
     </form>

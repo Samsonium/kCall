@@ -1,0 +1,14 @@
+{
+  "ru": {
+    "meet": "Давайте знакомиться!",
+    "prepare": "Подготовка ко входу в комнату",
+    "name_label": "Как Вас зовут?",
+    "next": "Далее"
+  },
+  "en": {
+    "meet": "Let's get acquainted!",
+    "prepare": "Preparing to enter room",
+    "name_label": "What is your name?",
+    "next": "Next"
+  }
+}
