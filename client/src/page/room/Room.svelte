@@ -32,13 +32,7 @@
     /** User stream tracks options */
     export let streamOptions: StreamOptions;
 
-    const translate = i18n(trRoom);
-
-    const statuses = {
-        disconnected: translate('status_disconnected'),
-        connecting: translate('status_connecting'),
-        ready: translate('status_ready')
-    };
+    let translate = i18n(trRoom);
 
     /** User's local stream */
     let selfStream: MediaStream;
@@ -104,6 +98,7 @@
     let meet: Meeting;
     onMount(async () => {
         getInvitationLink();
+        translate = i18n(trRoom);
 
         meet = new Meeting({
             roomID,
@@ -169,7 +164,7 @@
                     <p><b>{roomID}</b></p>
                     <div class="status">
                         <div class="circle {$state}"></div>
-                        <p>{statuses[$state]}</p>
+                        <p>{translate(`status_${$state}`)}</p>
                         {#if $state === 'disconnected'}
                             <a href="#reconnect" on:click={() => refreshConnection()}>
                                 <ArrowClockwise size={16} color="white" weight="bold" />

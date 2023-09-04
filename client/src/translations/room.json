@@ -13,16 +13,16 @@
     "send": "Отправить"
   },
   "en": {
-    "status_disconnected": "Отключён",
-    "status_connecting": "Подключение",
-    "status_ready": "Соединение установлено",
-    "preparing": "Подготовка",
-    "invite": "Пригласить",
-    "leave": "Выйти",
-    "chat_open": "Открыть чат",
-    "chat_close": "Закрыть чат",
-    "mic_off": "Микрофон выключен",
-    "chat": "Чат",
-    "send": "Отправить"
+    "status_disconnected": "Disconnected",
+    "status_connecting": "Connecting",
+    "status_ready": "Connected",
+    "preparing": "Preparing",
+    "invite": "Invite",
+    "leave": "Leave",
+    "chat_open": "Open chat",
+    "chat_close": "Close chat",
+    "mic_off": "Microphone off",
+    "chat": "Chat",
+    "send": "Send"
   }
 }

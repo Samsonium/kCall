@@ -6,9 +6,9 @@
     "user_disconnected": "отключился"
   },
   "en": {
-    "error_connect_title": "Ошибка подключения!",
-    "error_connect_msg": "Невозможно установить соединение",
-    "user_connected": "подключился",
-    "user_disconnected": "отключился"
+    "error_connect_title": "Connection error!",
+    "error_connect_msg": "Cannot establish connection",
+    "user_connected": "connected",
+    "user_disconnected": "disconnected"
   }
 }
