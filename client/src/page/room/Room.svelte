@@ -2,6 +2,7 @@
     import {onMount, onDestroy} from 'svelte';
     import {fade, slide} from 'svelte/transition';
     import getInvitationLink from '../../utils/getInvitationLink';
+    import i18n from '../../utils/i18n';
     import Meeting from '../../utils/meeting';
     import VideoGrid from './VideoGrid.svelte';
     import Preloader from '../../lib/Preloader.svelte';
@@ -20,6 +21,7 @@
     import type RoomStreams from '../../types/RoomStreams';
     import type {Writable} from 'svelte/store';
     import type StreamOptions from '../../types/StreamOptions';
+    import trRoom from '../../translations/room.json';
 
     /** User identifier */
     export let username: string;
@@ -30,10 +32,12 @@
     /** User stream tracks options */
     export let streamOptions: StreamOptions;
 
+    const translate = i18n(trRoom);
+
     const statuses = {
-        disconnected: 'Отключён',
-        connecting: 'Подключение',
-        ready: 'Соединение установлено'
+        disconnected: translate('status_disconnected'),
+        connecting: translate('status_connecting'),
+        ready: translate('status_ready')
     };
 
     /** User's local stream */
@@ -155,7 +159,7 @@
 
 {#if !streamOptions || !selfStream || !room || !streams || !$streams}
     <div class="sub-page" out:fade={{duration: 150}}>
-        <Preloader text="Подготовка" />
+        <Preloader text={translate('preparing')} />
     </div>
 {:else}
     <div class="sub-page" in:fade={{duration: 150, delay: 150}}>
@@ -175,11 +179,11 @@
                 </div>
                 <div class="actions">
                     <button class="accent" on:click={getInvitationLink}>
-                        <span>Пригласить</span>
+                        <span>{translate('invite')}</span>
                         <Link size={16} color="white" weight="bold" />
                     </button>
                     <button class="danger" on:click={() => location.href = '/'}>
-                        <span>Выйти</span>
+                        <span>{translate('leave')}</span>
                         <SignOut size={16} color="white" weight="bold" />
                     </button>
                 </div>
@@ -207,7 +211,7 @@
                 </div>
                 <button class="chat" class:open={isChatOpen} class:unread={haveUnreadMessages}
                         on:click={() => isChatOpen = !isChatOpen}>
-                    <span>{isChatOpen ? 'Закрыть чат' : 'Открыть чат'}</span>
+                    <span>{translate(isChatOpen ? 'chat_close' : 'chat_open')}</span>
                     <ChatCircle size={24} color="white" weight="bold" />
                 </button>
             </div>
@@ -224,7 +228,7 @@
                 {#if !streamOptions.tracks.audio && $state === 'ready'}
                     <div class="microphone-off" transition:fade={{duration: 150}}>
                         <MicrophoneSlash size={24} color="black" weight="bold" />
-                        <span>Микрофон выключен</span>
+                        <span>{translate('mic_off')}</span>
                     </div>
                 {/if}
                 {#if !streamOptions.tracks.video && $state === 'ready'}
@@ -239,7 +243,7 @@
             {#if isChatOpen}
                 <div class="chat" transition:slide={{duration:250}}>
                     <div class="header">
-                        <h3>Чат</h3>
+                        <h3>{translate('chat')}</h3>
                         <div class="counter">
                             <ChatCircle size={16} color="white" weight="bold" />
                             <span>{$room.chat.length}</span>
@@ -257,7 +261,7 @@
                     </div>
                     <form on:submit|preventDefault={sendMessage}>
                         <input required type="text" minLength="1" bind:value={messageValue}>
-                        <button type="submit" class="accent">Отправить</button>
+                        <button type="submit" class="accent">{translate('send')}</button>
                     </form>
                 </div>
             {/if}
