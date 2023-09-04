@@ -7,7 +7,6 @@ jobs:
 
   # Build and deploy Peer server
   peer:
-    needs: [ tests ]
     uses: ./.github/workflows/deploy_peer.yml
     secrets:
       SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -17,7 +16,6 @@ jobs:
 
   # Build and deploy API server with sockets
   api:
-    needs: [ tests ]
     uses: ./.github/workflows/deploy_api.yml
     secrets:
       SSH_HOST: ${{ secrets.SSH_HOST }}
@@ -27,7 +25,6 @@ jobs:
 
   # Build and deploy static server with client
   static:
-    needs: [ tests ]
     uses: ./.github/workflows/deploy_static.yml
     secrets:
       SSH_HOST: ${{ secrets.SSH_HOST }}
