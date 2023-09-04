@@ -1,0 +1,18 @@
+{
+  "ru": {
+    "no_name": "Введите имя",
+    "invalid_name_length": "Длина имени — от 2 до 30 символов",
+    "invalid_name_format": "Имя должно состоять из букв или цифр",
+    "no_id": "Введите идентификатор комнаты",
+    "invalid_id_length": "Длина идентификатора команты — от 2 до 15 символов",
+    "invalid_id_format": "Идентификатор комнаты не должен содержать пробелов и спец. симолов"
+  },
+  "en": {
+    "no_name": "Enter your name",
+    "invalid_name_length": "Name length - from 2 to 30 characters",
+    "invalid_name_format": "Name must contain letters or numbers",
+    "no_id": "Enter room ID",
+    "invalid_id_length": "Room identifier length - from 2 to 15 characters",
+    "invalid_id_format": "The room ID must not contain spaces or special characters"
+  }
+}

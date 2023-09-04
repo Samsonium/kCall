@@ -1,0 +1,16 @@
+{
+  "ru": {
+    "greetings": "Добро пожаловать в kCall!",
+    "name_label": "Как Вас зовут?",
+    "id_label": "Идентификатор комнаты",
+    "id_generate": "Сгенерировать",
+    "join": "Присоединиться"
+  },
+  "en": {
+    "greetings": "Welcome to kCall!",
+    "name_label": "What is your name?",
+    "id_label": "Room ID",
+    "id_generate": "Generate",
+    "join": "Join room"
+  }
+}
