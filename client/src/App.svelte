@@ -7,6 +7,13 @@
   onMount(() => {
       if (navigator?.registerProtocolHandler)
           navigator.registerProtocolHandler('web+kcall', '/room/%s');
+
+      const path = decodeURIComponent(location.pathname);
+      if (path.includes('room/web+kcall://')) {
+          const decoded = decodeURIComponent(location.pathname)
+          const id = decoded.substring(decoded.indexOf('://') + 3);
+          location.href = '/room/' + id;
+      }
   });
 </script>
 
