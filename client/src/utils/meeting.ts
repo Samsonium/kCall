@@ -2,6 +2,7 @@ import Peer, {type MediaConnection} from 'peerjs';
 import {notify} from './notifier';
 import {io, Socket} from 'socket.io-client';
 import {get, writable, type Writable} from 'svelte/store';
+import i18n from './i18n';
 import type {
     RoomData,
     RoomMember,
@@ -12,6 +13,9 @@ import type {
 import type MeetingConfig from '../types/MeetingConfig';
 import type StreamOptions from '../types/StreamOptions';
 import type RoomStreams from '../types/RoomStreams';
+import trMeeting from '../translations/meeting.json';
+
+const translate = i18n(trMeeting);
 
 /**
  * Class for meeting call
@@ -125,8 +129,8 @@ export default class Meeting {
         } catch (e) {
             console.error(e);
             notify.error({
-                title: 'Ошибка подключения',
-                message: 'Невозможно установить соединение'
+                title: translate('error_connect_title'),
+                message: translate('error_connect_msg')
             });
             await this.endCall();
             return;
@@ -269,7 +273,7 @@ export default class Meeting {
                 return room;
             });
             notify.success({
-                message: user.name + ' присоединился'
+                message: `${user.name} ${translate('user_connected')}`
             });
         });
 
@@ -288,7 +292,7 @@ export default class Meeting {
                 return streams;
             });
             notify.error({
-                message: user.name + ' отключился'
+                message: `${user.name} ${translate('user_disconnected')}`
             });
         });
 

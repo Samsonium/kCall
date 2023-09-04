@@ -1,0 +1,14 @@
+{
+  "ru": {
+    "error_connect_title": "Ошибка подключения!",
+    "error_connect_msg": "Невозможно установить соединение",
+    "user_connected": "подключился",
+    "user_disconnected": "отключился"
+  },
+  "en": {
+    "error_connect_title": "Ошибка подключения!",
+    "error_connect_msg": "Невозможно установить соединение",
+    "user_connected": "подключился",
+    "user_disconnected": "отключился"
+  }
+}
