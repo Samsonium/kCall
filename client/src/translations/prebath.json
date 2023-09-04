@@ -1,0 +1,16 @@
+{
+  "ru": {
+    "stream_devices_required": "Разрешите доступ к камере и микрофону для просмотра",
+    "stream_devices_error": "Невозможно получить доступ к камере и микрофону",
+    "greetings": "Здравствуйте",
+    "prepare": "Подготовка ко входу в комнату",
+    "join": "Присоединиться"
+  },
+  "en": {
+    "stream_devices_required": "Allow access to the camera and microphone for preview",
+    "stream_devices_error": "Unable to access camera and microphone",
+    "greetings": "Hello",
+    "prepare": "Preparing to join room",
+    "join": "Join"
+  }
+}

@@ -1,8 +1,10 @@
 <script lang="ts">
+    import {onMount} from 'svelte';
     import getInvitationLink from '../../utils/getInvitationLink';
+    import i18n from '../../utils/i18n';
     import {ArrowRight, Microphone, Webcam} from 'phosphor-svelte';
     import type StreamOptions from '../../types/StreamOptions';
-    import {onMount} from 'svelte';
+    import trPrebath from '../../translations/prebath.json';
 
     /**
      * Room ID
@@ -19,6 +21,8 @@
      */
     export let streamOptions;
 
+    const translate = i18n(trPrebath);
+
     /**
      * User's stream
      */
@@ -32,7 +36,7 @@
     /**
      * Hint text if stream disabled
      */
-    let hintText = 'Разрешите доступ к камере и микрофону для предпросмотра';
+    let hintText = translate('stream_devices_required');
 
     /**
      * Temporary stream options holder
@@ -73,7 +77,7 @@
 
     onMount(() => {
         if (!navigator?.mediaDevices?.getUserMedia) {
-            hintText = 'Невозможно получить доступ к камере и микрофону';
+            hintText = translate('stream_devices_error');
         } else {
             navigator.mediaDevices.getUserMedia({
                 audio: true,
@@ -101,9 +105,9 @@
 </script>
 
 <div class="prebath">
-    <h1>Здравствуйте, {user}</h1>
+    <h1>{translate('greetings')}, {user}</h1>
     <p>
-        Подготовка ко входу в комнату
+        {translate('prepare')}
         <a href="#generate-link" on:click={getInvitationLink}>{room}</a>
     </p>
     <form on:submit|preventDefault={handleSubmitForm}>
@@ -129,7 +133,7 @@
                 <Webcam size={24} color="white" weight="bold" />
             </button>
             <button class="accent">
-                <span>Присоединиться</span>
+                <span>{translate('join')}</span>
                 <ArrowRight size={16} color="white" weight="bold" />
             </button>
         </div>
