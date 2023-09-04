@@ -60,6 +60,9 @@
     /** Typing message value */
     let messageValue = '';
 
+    /** Is user have unread messages in chat */
+    let haveUnreadMessages = false;
+
     /**
      * Switch track enable state
      * @param type
@@ -110,6 +113,20 @@
         streams = meet.streams;
         selfStream = meet.stream;
 
+        let lastCount;
+        room.subscribe((_room) => {
+            if (!_room || !Array.isArray(_room.chat)) return;
+            if (typeof lastCount !== 'number') {
+                lastCount = _room.chat.length;
+                return;
+            }
+
+            if (lastCount !== $room.chat.length) {
+                lastCount = $room.chat.length;
+                haveUnreadMessages = !isChatOpen;
+            }
+        });
+
         await new Promise(r => setTimeout(r, 1000));
         meet.beginCall().then();
     });
@@ -118,7 +135,7 @@
         meet?.endCall();
     });
 
-    $: if ($state === 'ready') {
+    $: if ($state === 'ready' && selfVideo) {
         selfVideo.srcObject = selfStream;
         selfVideo.addEventListener('loadedmetadata', () => {
             selfVideo.play();
@@ -126,6 +143,7 @@
     }
 
     $: if (isChatOpen) {
+        haveUnreadMessages = false;
         chatHistory?.scrollTo({
             behavior: 'instant',
             top: chatHistory.scrollHeight
@@ -185,8 +203,9 @@
                         <Screencast size={24} color="white" weight="bold" />
                     </button>
                 </div>
-                <button class="chat" class:open={isChatOpen}
+                <button class="chat" class:open={isChatOpen} class:unread={haveUnreadMessages}
                         on:click={() => isChatOpen = !isChatOpen}>
+                    <span>{isChatOpen ? 'Закрыть чат' : 'Открыть чат'}</span>
                     <ChatCircle size={24} color="white" weight="bold" />
                 </button>
             </div>
@@ -611,17 +630,28 @@
         }
 
         button.chat {
-          width: 48px;
           height: 48px;
-          padding: 0;
+          padding: 0 12px;
           background: var(--panel);
+          color: white;
           border: 1px solid rgba(white, .5);
           transition: background .2s cubic-bezier(.25, 0, 0, 1);
 
           &.open {
             background: var(--accent);
           }
+
+          &.unread {
+            background: var(--panel);
+            animation: pulse 2s cubic-bezier(.25, 0, 0, 1) infinite;
+          }
         }
+      }
+    }
+
+    @keyframes pulse {
+      50% {
+        background: var(--error);
       }
     }
 
