@@ -2,11 +2,9 @@
 
 # Dirs
 !/.github
-!/api-server
+!/api
 !/client
-!/peer-server
-!/static-server
-!/tools
+!/meeting
 
 # Files
 !/.gitignore

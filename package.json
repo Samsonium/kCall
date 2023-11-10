@@ -9,10 +9,8 @@
     "pm2": "^5.3.0"
   },
   "workspaces": [
+    "meeting",
     "client",
-    "api-server",
-    "peer-server",
-    "static-server",
-    "tools"
+    "api"
   ]
 }
