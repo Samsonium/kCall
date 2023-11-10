@@ -4,7 +4,7 @@
 !/.github
 !/api
 !/client
-!/meeting
+!/engine
 
 # Files
 !/.gitignore
