@@ -6,10 +6,8 @@
 !/client
 !/peer-server
 !/static-server
-!/tools
 
 # Files
 !/.gitignore
-!/ecosystem.dev.js
 !/package.json
 !/yarn.lock
