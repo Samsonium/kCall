@@ -1,8 +1,8 @@
 import {Injectable} from '@nestjs/common';
 import {InjectModel} from '@nestjs/sequelize';
 import {CreateUserDto} from './dto/CreateUser.dto';
-import {UserModel} from './models/User.model';
 import {SessionModel} from './models/Session.model';
+import {UserModel} from './models/User.model';
 
 @Injectable()
 export class IdentityService {
@@ -10,7 +10,8 @@ export class IdentityService {
     constructor(
         @InjectModel(UserModel) private userRepo: typeof UserModel,
         @InjectModel(SessionModel) private sessionRepo: typeof SessionModel
-    ) {}
+    ) {
+    }
 
     /**
      * Retrieves a list of users from the database.

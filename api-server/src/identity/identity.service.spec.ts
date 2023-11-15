@@ -1,9 +1,9 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {IdentityService} from './identity.service';
 import {SequelizeModule} from '@nestjs/sequelize';
-import {UserModel} from './models/User.model';
-import {SessionModel} from './models/Session.model';
+import {Test, TestingModule} from '@nestjs/testing';
 import {CreateUserDto} from './dto/CreateUser.dto';
+import {IdentityService} from './identity.service';
+import {SessionModel} from './models/Session.model';
+import {UserModel} from './models/User.model';
 
 /**
  * Generates a random string consisting of characters from the alphabet.

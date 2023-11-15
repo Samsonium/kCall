@@ -1,5 +1,5 @@
-import {Column, DataType, Model, Table} from 'sequelize-typescript';
 import {ApiProperty} from '@nestjs/swagger';
+import {Column, DataType, Model, Table} from 'sequelize-typescript';
 
 @Table({tableName: 'users'})
 export class UserModel extends Model {

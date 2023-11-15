@@ -1,13 +1,5 @@
-import {
-    BadRequestException,
-    Controller, Delete,
-    Get,
-    Patch,
-    Post, Query,
-    UnauthorizedException
-} from '@nestjs/common';
-import {ApiOperation, ApiResponse, ApiTags} from '@nestjs/swagger';
-import {ErrorBodyDto} from './dto/ErrorBody.dto';
+import {Controller} from '@nestjs/common';
+import {ApiTags} from '@nestjs/swagger';
 
 @ApiTags('Identity')
 @Controller('identity')
