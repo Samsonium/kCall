@@ -53,17 +53,6 @@ export class IdentityService {
     }
 
     /**
-     * Calculates the sum of two numbers.
-     *
-     * @param {number} a - The first number.
-     * @param {number} b - The second number.
-     * @returns {number} The sum of the two numbers.
-     */
-    sum(a: number, b: number): number {
-        return a + b;
-    }
-
-    /**
      * Updates a user in the database.
      *
      * @param {number} id - The ID of the user to be updated.
