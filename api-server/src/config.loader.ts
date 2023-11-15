@@ -1,18 +1,17 @@
 import {readFileSync} from 'node:fs';
 import {join} from 'node:path';
 
-export default () => {
-    try {
-        return JSON.parse(readFileSync(join(__dirname, '..', 'kcall.config.json')).toString('utf-8'))
-    } catch (_) {
-        return {
-            db: {
-                host: 'localhost',
-                port: 5432,
-                username: 'postgres',
-                password: 'root',
-                database: 'kcall'
-            }
-        };
-    }
-};
+/**
+ * Parses the content of the 'kcall.config.json' file and returns it as a JavaScript object.
+ *
+ * @returns {Record<string, any>} The parsed JavaScript object representing the content of the 'kcall.config.json' file.
+ */
+export default (): Record<string, any> => JSON.parse(
+    readFileSync(
+        join(
+            __dirname,
+            '..',
+            'kcall.config.json'
+        )
+    ).toString('utf-8')
+);
