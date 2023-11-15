@@ -8,6 +8,8 @@ import {IdentityModule} from './identity/identity.module';
 import {SessionModel} from './identity/models/Session.model';
 import {SigninModel} from './identity/models/Signin.model';
 import {UserModel} from './identity/models/User.model';
+import {MailerModule} from './mailer/mailer.module';
+import {MailerService} from './mailer/mailer.service';
 
 @Module({
     imports: [
@@ -29,10 +31,11 @@ import {UserModel} from './identity/models/User.model';
                 autoLoadModels: true
             })
         }),
-        IdentityModule
+        IdentityModule,
+        MailerModule
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [AppService, MailerService],
 })
 export class AppModule {
 }
