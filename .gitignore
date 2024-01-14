@@ -2,8 +2,8 @@
 
 # Dirs
 !/.github
-!/api-server
 !/client
+!/api-server
 !/peer-server
 !/static-server
 !/tools
