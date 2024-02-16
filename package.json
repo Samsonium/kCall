@@ -13,6 +13,10 @@
     "frontend", "backend", "orm", "database", "api",
     "svelte", "sveltekit", "adonis", "swagger"
   ],
+  "workspaces": [
+    "tools/socket-events",
+    "tools/uikit"
+  ],
   "author": "",
   "license": "ISC"
 }
