@@ -1,0 +1,14 @@
+{
+  "name": "@samsonium/k-call",
+  "version": "2.0.0",
+  "description": "Open-source meeting service",
+  "scripts": {
+    "test": "echo test",
+    "build": "echo build",
+    "start:dev": "echo start dev",
+    "start:prod": "echo start prod"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
