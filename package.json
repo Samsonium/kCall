@@ -1,18 +1,22 @@
 {
-  "name": "kcall",
-  "private": true,
+  "name": "@samsonium/k-call",
+  "version": "2.0.0",
+  "description": "Open-source meeting service",
   "scripts": {
-    "dev:start": "pm2 start ecosystem.dev.js --env dev",
-    "dev:stop": "pm2 stop ecosystem.dev.js"
+    "test": "echo test",
+    "build": "echo build",
+    "start:dev": "echo start dev",
+    "start:prod": "echo start prod"
   },
-  "dependencies": {
-    "pm2": "^5.3.0"
-  },
+  "keywords": [
+    "js", "javascript", "ts", "typescript", "postgres",
+    "frontend", "backend", "orm", "database", "api",
+    "svelte", "sveltekit", "adonis", "swagger"
+  ],
   "workspaces": [
-    "client",
-    "api-server",
-    "peer-server",
-    "static-server",
-    "tools"
-  ]
+    "tools/socket-events",
+    "tools/uikit"
+  ],
+  "author": "",
+  "license": "ISC"
 }
