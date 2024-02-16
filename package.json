@@ -8,7 +8,11 @@
     "start:dev": "echo start dev",
     "start:prod": "echo start prod"
   },
-  "keywords": [],
+  "keywords": [
+    "js", "javascript", "ts", "typescript", "postgres",
+    "frontend", "backend", "orm", "database", "api",
+    "svelte", "sveltekit", "adonis", "swagger"
+  ],
   "author": "",
   "license": "ISC"
 }
