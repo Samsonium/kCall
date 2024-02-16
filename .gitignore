@@ -2,14 +2,11 @@
 
 # Dirs
 !/.github
-!/client
-!/api-server
-!/peer-server
-!/static-server
+!/docs
+!/services
 !/tools
 
 # Files
 !/.gitignore
-!/ecosystem.dev.js
+!/README.md
 !/package.json
-!/yarn.lock
