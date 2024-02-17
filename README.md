@@ -2,6 +2,10 @@
 
 # kCall
 
+| Document versions |                                |
+|-------------------|--------------------------------|
+| English           | [Russian](./docs/README_RU.md) |
+
 An open-source meeting service where you can host meetings, collaborate with others, and communicate
 effectively, all within a user-friendly environment.
 
