@@ -2,7 +2,9 @@
   "name": "socket-events",
   "version": "1.0.0",
   "description": "Socket events library",
-  "files": ["./dist"],
+  "files": [
+    "./dist"
+  ],
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc"
@@ -12,5 +14,8 @@
   "license": "ISC",
   "devDependencies": {
     "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.4"
   }
 }
