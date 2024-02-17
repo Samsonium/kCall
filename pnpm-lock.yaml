@@ -84,6 +84,12 @@ importers:
         specifier: ^5.3.3
         version: 5.3.3
 
+  tools/socket-events:
+    devDependencies:
+      typescript:
+        specifier: ^5.3.3
+        version: 5.3.3
+
   tools/uikit:
     dependencies:
       imask:
