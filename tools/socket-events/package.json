@@ -2,9 +2,10 @@
   "name": "socket-events",
   "version": "1.0.0",
   "description": "Socket events library",
-  "files": ["./types"],
+  "files": ["./dist"],
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "echo build"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
