@@ -1,0 +1,9 @@
+/*
+
+# Dirs
+!/src
+
+# Files
+!/.gitignore
+!/package.json
+!/tsconfig.json
