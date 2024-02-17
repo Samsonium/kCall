@@ -1,0 +1,16 @@
+{
+  "name": "socket-events",
+  "version": "1.0.0",
+  "description": "Socket events library",
+  "files": ["./dist"],
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
