@@ -16,7 +16,7 @@ effectively, all within a user-friendly environment.
 - **One-time rooms**: host or join rooms without authorization.
 
 ## Requirements
-- NodeJS >= 18
+- NodeJS >= 20.6
 - PNPM >= 8
 - Postgres server
 
