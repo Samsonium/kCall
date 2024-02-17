@@ -26,7 +26,8 @@
 	},
 	"dependencies": {
 		"socket.io": "^4.7.4",
-		"uikit": "workspace:~"
+		"uikit": "workspace:~",
+		"socket-events": "workspace:~"
 	},
 	"type": "module"
 }
