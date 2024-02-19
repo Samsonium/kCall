@@ -3,20 +3,39 @@
   "version": "2.0.0",
   "description": "Open-source meeting service",
   "scripts": {
+    "lint": "eslint services/api/**/*.{ts,js} services/frontend/**/*.{ts,js,svelte} tools/socket-events/**/*.ts tools/uikit/**/*.{ts,js,svelte}",
+    "lint:fix": "eslint --fix services/api/**/*.{ts,js} services/frontend/**/*.{ts,js,svelte} tools/socket-events/**/*.ts tools/uikit/**/*.{ts,js,svelte}",
     "test": "echo test",
     "build": "echo build",
     "start:dev": "echo start dev",
     "start:prod": "echo start prod"
   },
   "keywords": [
-    "js", "javascript", "ts", "typescript", "postgres",
-    "frontend", "backend", "orm", "database", "api",
-    "svelte", "sveltekit", "adonis", "swagger"
+    "js",
+    "javascript",
+    "ts",
+    "typescript",
+    "postgres",
+    "frontend",
+    "backend",
+    "orm",
+    "database",
+    "api",
+    "svelte",
+    "sveltekit",
+    "adonis",
+    "swagger"
   ],
   "workspaces": [
     "tools/socket-events",
     "tools/uikit"
   ],
-  "author": "",
-  "license": "ISC"
+  "author": "Samsonium",
+  "license": "ISC",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
+    "eslint": "^8.56.0",
+    "eslint-plugin-svelte": "^2.35.1"
+  }
 }
