@@ -3,7 +3,7 @@ import IC2SEvents from './IC2SEvents';
 import ISockData from './ISockData';
 
 export {
-    IS2CEvents,
-    IC2SEvents,
-    ISockData
-}
+	IS2CEvents,
+	IC2SEvents,
+	ISockData
+};

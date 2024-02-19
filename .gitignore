@@ -7,8 +7,10 @@
 !/tools
 
 # Files
+!/.eslintrc.js
 !/.gitignore
 !/README.md
+!/tsconfig.json
 !/package.json
 !/pnpm-lock.yaml
 !/pnpm-workspace.yaml

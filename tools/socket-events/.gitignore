@@ -4,6 +4,7 @@
 !/src
 
 # Files
+!/.eslintignore
 !/.gitignore
 !/package.json
 !/tsconfig.json

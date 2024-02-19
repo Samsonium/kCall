@@ -1,2 +1,3 @@
 /** Socket data */
-export default interface ISockData {}
+interface ISockData {}
+export default ISockData;

@@ -1,2 +1,3 @@
 /** Events from client to server */
-export default interface IC2SEvents {}
+interface IC2SEvents {}
+export default IC2SEvents;

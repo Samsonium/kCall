@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "services/api",
+    "services/frontend",
+    "tools/socket-events",
+    "tools/uikit"
+  ]
+}
