@@ -15,8 +15,8 @@
     export let color = 'black';
 
     onMount(() => {
-        if (!name) name = 'at';
-    })
+    	if (!name) name = 'at';
+    });
 </script>
 
 <svelte:component this={iconsList[name]} {size} {weight} />

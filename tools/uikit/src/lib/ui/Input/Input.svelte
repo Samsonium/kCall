@@ -1,7 +1,6 @@
 <script lang="ts">
     import {onMount} from 'svelte';
     import IMask from 'imask';
-    import type {InputMask} from 'imask';
 
     /** Should be full-width */
     export let block = false;
@@ -34,19 +33,19 @@
      * Input field change event handler
      * @param e Input event
      */
-    function handleInput(e: InputEvent): void {}
+    function handleInput(): void {}
 
     // Enable iMask if `mask` prop specified
     onMount(() => {
-        if (!mask) return;
-        const imask = IMask(inputElement, {mask});
-        imask.on('accept', () => {
-            value = imask.value;
-            unmaskedValue = imask.unmaskedValue;
-            console.log('Handling input')
-        });
+    	if (!mask) return;
+    	const imask = IMask(inputElement, {mask});
+    	imask.on('accept', () => {
+    		value = imask.value;
+    		unmaskedValue = imask.unmaskedValue;
+    		console.log('Handling input');
+    	});
 
-        return () => imask.destroy();
+    	return () => imask.destroy();
     });
 </script>
 
@@ -58,6 +57,7 @@
     {/if}
     <input {id}
            {type}
+           {name}
            {placeholder}
            {value}
            class:block
